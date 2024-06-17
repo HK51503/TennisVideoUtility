@@ -1,13 +1,14 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea
+    QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox
 )
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
-
+        self.app = app
         self.setWindowTitle("Tennis Video Utility V1")
+        self.resize(500, 400)
         main_window_central_widget = QWidget()
         main_window_button_layout = QVBoxLayout()
 
@@ -43,5 +44,16 @@ class MainWindow(QMainWindow):
         print("3")
 
     def quit_button_clicked(self):
-        print("4")
+        quit_dialog = QMessageBox()
+        quit_dialog.setWindowTitle(" ")
+        quit_dialog.setIcon(QMessageBox.Information)
+        quit_dialog.setText("アプリケーションを終了しますか？")
+        quit_dialog.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
+        quit_dialog.setDefaultButton(QMessageBox.No)
+        quit_dialog.setButtonText(QMessageBox.Yes, "はい")
+        quit_dialog.setButtonText(QMessageBox.No, "いいえ")
 
+        ret = quit_dialog.exec()
+
+        if ret == QMessageBox.Yes:
+            self.app.quit()
