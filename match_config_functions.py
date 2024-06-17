@@ -20,13 +20,54 @@ def initialize():
 
     match_config.write(open(var.match_config_file_name, "w"))
 
+
 def set_university(university):
     match_config = ConfigParser()
     match_config.read(var.match_config_file_name)
     match_config.set("settings", "university", university)
 
-def set_singles(singles):
-    print("do it later")
+    with open(var.match_config_file_name, 'w') as configfile:
+        match_config.write(configfile)
 
-def set_doubles(doubles):
-    print("do it later")
+
+def read_university():
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    university_name = match_config["settings"]["university"]
+    return university_name
+
+
+def set_number_of_singles(singles):
+    if singles.isdecimal() is True:
+        match_config = ConfigParser()
+        match_config.read(var.match_config_file_name)
+        match_config.set("settings", "number_of_singles", singles)
+
+        with open(var.match_config_file_name, 'w') as configfile:
+            match_config.write(configfile)
+
+
+
+def read_number_of_singles():
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    singles_number = match_config["settings"]["number_of_singles"]
+    return singles_number
+
+
+def set_number_of_doubles(doubles):
+    if doubles.isdecimal() is True:
+        match_config = ConfigParser()
+        match_config.read(var.match_config_file_name)
+        match_config.set("settings", "number_of_doubles", doubles)
+
+        with open(var.match_config_file_name, 'w') as configfile:
+            match_config.write(configfile)
+
+
+def read_number_of_doubles():
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    doubles_number = match_config["settings"]["number_of_doubles"]
+    return doubles_number
+

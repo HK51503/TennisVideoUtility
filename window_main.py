@@ -1,11 +1,13 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox
 )
+from window_edit_match import EditMatchWindow
 
 
 class MainWindow(QMainWindow):
     def __init__(self, app):
         super().__init__()
+
         self.app = app
         self.setWindowTitle("Tennis Video Utility V1")
         self.resize(500, 400)
@@ -38,7 +40,8 @@ class MainWindow(QMainWindow):
         print("1")
 
     def edit_match_button_clicked(self):
-        print("2")
+        self.edit_match_window = EditMatchWindow()
+        self.edit_match_window.show()
 
     def edit_settings_button_clicked(self):
         print("3")

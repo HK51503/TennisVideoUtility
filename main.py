@@ -6,8 +6,6 @@ import variables as var
 
 conf.initialize()
 
-
-
 app = QApplication(sys.argv)
 
 window = MainWindow(app)
