@@ -7,7 +7,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("仮タイトル")
+        self.setWindowTitle("Tennis Video Utility V1")
         main_window_central_widget = QWidget()
         main_window_button_layout = QVBoxLayout()
 
