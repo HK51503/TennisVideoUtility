@@ -34,6 +34,9 @@ class EditMatchWindow(QWidget):
             self.number_of_doubles_lineedit = QLineEdit(conf.read_number_of_doubles())
         grid_layout.addWidget(self.number_of_doubles_lineedit, 2, 1)
 
+        self.warning_label = QLabel("")
+        self.warning_label.setStyleSheet("color: red;")
+        grid_layout.addWidget(self.warning_label, 1, 2)
         apply_button = QPushButton()
         apply_button.setText("本数を適用")
         apply_button.clicked.connect(self.apply_button_clicked)
@@ -64,58 +67,115 @@ class EditMatchWindow(QWidget):
         self.main_v_layout.addLayout(self.matches_h_layout)
         self.setLayout(self.main_v_layout)
 
-        self.apply_button_clicked()
+        if conf.read_value("settings", "number_is_set") == "True":
+            self.render_players()
 
     def apply_button_clicked(self):
         validation_1 = str.isdecimal(self.number_of_singles_lineedit.text())
         validation_2 = str.isdecimal(self.number_of_doubles_lineedit.text())
+        validation = validation_1 and validation_2
 
-        if validation_1 and validation_2:
+        if validation is True:
+            # save if it was called from apply button
+            for i in range(int(conf.read_number_of_singles())):
+                lineedit_name = "lineedit_s" + str(i + 1)
+                option_name = "S" + str(i + 1)
+                conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
+
+            for i in range(int(conf.read_number_of_doubles())):
+                lineedit_name_1 = "lineedit_d" + str(i + 1) + "_1"
+                lineedit_name_2 = "lineedit_d" + str(i + 1) + "_2"
+                option_name_1 = "D" + str(i + 1) + "p1"
+                option_name_2 = "D" + str(i + 1) + "p2"
+                conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
+                conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
+
+            # set number_is_set to True
+            conf.set_number_is_set_to_true()
+
+            self.warning_label.setText("")
+
             # write numbers to match config
             conf.set_number_of_singles(self.number_of_singles_lineedit.text())
             conf.set_number_of_doubles(self.number_of_doubles_lineedit.text())
 
-            for i in reversed(range(self.singles_gridlayout.count())):
-                self.singles_gridlayout.itemAt(i).widget().setParent(None)
-            for i in reversed(range(self.doubles_gridlayout.count())):
-                self.doubles_gridlayout.itemAt(i).widget().setParent(None)
+            self.render_players()
 
-            number_of_singles = int(conf.read_number_of_singles())
-            number_of_doubles = int(conf.read_number_of_doubles())
+        else:
+            self.warning_label.setText("有効な数字を入力してください")
 
-            for i in range(number_of_singles):
-                label_name = "label_s" + str(i+1)
-                label_text = "S" + str(i+1)
-                setattr(self, label_name, QLabel(label_text))
+        self.update()
 
-                linedit_name = "lineedit_s" + str(i+1)
-                setattr(self, linedit_name, QLineEdit(""))
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        for i in range(int(conf.read_number_of_singles())):
+            lineedit_name = "lineedit_s" + str(i + 1)
+            option_name = "S" + str(i+1)
+            conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
 
-                self.singles_gridlayout.addWidget(getattr(self, label_name), i, 0)
-                self.singles_gridlayout.addWidget(getattr(self, linedit_name), i, 1)
+        for i in range(int(conf.read_number_of_doubles())):
+            lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
+            lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
+            option_name_1 = "D" + str(i+1) + "p1"
+            option_name_2 = "D" + str(i+1) + "p2"
+            conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
+            conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
 
-            for i in range(number_of_doubles):
-                # player1
-                label_name_1 = "label_d" + str(i+1) + "_1"
-                label_text_1 = "D" + str(i+1) + "①"
-                setattr(self, label_name_1, QLabel(label_text_1))
+    def render_players(self):
+        for i in reversed(range(self.singles_gridlayout.count())):
+            self.singles_gridlayout.itemAt(i).widget().setParent(None)
+        for i in reversed(range(self.doubles_gridlayout.count())):
+            self.doubles_gridlayout.itemAt(i).widget().setParent(None)
 
-                linedit_name_1 = "lineedit_d" + str(i+1) + "_1"
-                setattr(self, linedit_name_1, QLineEdit(""))
+        number_of_singles = int(conf.read_number_of_singles())
+        number_of_doubles = int(conf.read_number_of_doubles())
 
-                self.doubles_gridlayout.addWidget(getattr(self, label_name_1), i*2, 0)
-                self.doubles_gridlayout.addWidget(getattr(self, linedit_name_1), i*2, 1)
+        for i in range(number_of_singles):
+            label_name = "label_s" + str(i+1)
+            label_text = "S" + str(i+1)
+            setattr(self, label_name, QLabel(label_text))
+
+            lineedit_name = "lineedit_s" + str(i+1)
+            setattr(self, lineedit_name, QLineEdit(""))
+
+            self.singles_gridlayout.addWidget(getattr(self, label_name), i, 0)
+
+            option_name = "S" + str(i + 1)
+            lineedit = getattr(self, lineedit_name)
+            try: lineedit.setText(conf.read_value("singles", option_name))
+            except: lineedit.setText("")
+            self.singles_gridlayout.addWidget(lineedit, i, 1)
 
 
-                # player2
-                label_name_2 = "label_d" + str(i + 1) + "_2"
-                label_text_2 = "D" + str(i + 1) + "②"
-                setattr(self, label_name_2, QLabel(label_text_2))
+        for i in range(number_of_doubles):
+            # player1
+            label_name_1 = "label_d" + str(i+1) + "_1"
+            label_text_1 = "D" + str(i+1) + "①"
+            setattr(self, label_name_1, QLabel(label_text_1))
 
-                linedit_name_2 = "lineedit_d" + str(i + 1) + "_2"
-                setattr(self, linedit_name_2, QLineEdit(""))
+            lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
+            setattr(self, lineedit_name_1, QLineEdit(""))
 
-                self.doubles_gridlayout.addWidget(getattr(self, label_name_2), i*2+1, 0)
-                self.doubles_gridlayout.addWidget(getattr(self, linedit_name_2), i*2+1, 1)
+            self.doubles_gridlayout.addWidget(getattr(self, label_name_1), i*2, 0)
 
-            self.update()
+            option_name_1 = "D" + str(i + 1) + "p1"
+            lineedit_1 = getattr(self, lineedit_name_1)
+            try: lineedit_1.setText(conf.read_value("doubles", option_name_1))
+            except: lineedit_1.setText("")
+            self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_1), i*2, 1)
+
+            # player2
+            label_name_2 = "label_d" + str(i+1) + "_2"
+            label_text_2 = "D" + str(i + 1) + "②"
+            setattr(self, label_name_2, QLabel(label_text_2))
+
+            lineedit_name_2 = "lineedit_d" + str(i + 1) + "_2"
+            setattr(self, lineedit_name_2, QLineEdit(""))
+
+            self.doubles_gridlayout.addWidget(getattr(self, label_name_2), i*2+1, 0)
+
+            option_name_2 = "D" + str(i + 1) + "p2"
+            lineedit_2 = getattr(self, lineedit_name_2)
+            try: lineedit_2.setText(conf.read_value("doubles", option_name_2))
+            except: lineedit_2.setText("")
+            self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)

@@ -12,6 +12,7 @@ def initialize():
     match_config.add_section("settings")
     match_config.set("settings", "match_date", "")
     match_config.set("settings", "university", "")
+    match_config.set("settings", "number_is_set", "False")
     match_config.set("settings", "number_of_singles", "0")
     match_config.set("settings", "number_of_doubles", "0")
 
@@ -19,6 +20,31 @@ def initialize():
     match_config.add_section("doubles")
 
     match_config.write(open(var.match_config_file_name, "w"))
+
+
+def set_value(section, option, value):
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    match_config.set(section, option, value)
+
+    with open(var.match_config_file_name, 'w') as configfile:
+        match_config.write(configfile)
+
+
+def read_value(section, option):
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    value = match_config[section][option]
+    return value
+
+
+def set_number_is_set_to_true():
+    match_config = ConfigParser()
+    match_config.read(var.match_config_file_name)
+    match_config.set("settings", "number_is_set", "True")
+
+    with open(var.match_config_file_name, 'w') as configfile:
+        match_config.write(configfile)
 
 
 def set_university(university):
@@ -47,7 +73,6 @@ def set_number_of_singles(singles):
             match_config.write(configfile)
 
 
-
 def read_number_of_singles():
     match_config = ConfigParser()
     match_config.read(var.match_config_file_name)
@@ -70,4 +95,3 @@ def read_number_of_doubles():
     match_config.read(var.match_config_file_name)
     doubles_number = match_config["settings"]["number_of_doubles"]
     return doubles_number
-
