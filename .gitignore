@@ -1,2 +1,3 @@
-TennisVideoUtility/.idea/
-TennisVideoUtility/__pychache__/
+.idea/
+__pychache__/
+*.ini
