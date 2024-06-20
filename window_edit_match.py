@@ -19,8 +19,8 @@ class EditMatchWindow(QWidget):
         grid_layout.addWidget(QLabel("シングルスの本数 : "), 1, 0)
         grid_layout.addWidget(QLabel("ダブルスの本数 : "), 2, 0)
 
-        university_name_lineedit = QLineEdit(conf.read_university())
-        grid_layout.addWidget(university_name_lineedit, 0, 1)
+        self.university_name_lineedit = QLineEdit(conf.read_university())
+        grid_layout.addWidget(self.university_name_lineedit, 0, 1)
 
         if conf.read_number_of_singles() == "0":
             self.number_of_singles_lineedit = QLineEdit("")
@@ -54,6 +54,7 @@ class EditMatchWindow(QWidget):
         self.singles_v_layout.addStretch()
         self.singles_groupbox.setLayout(self.singles_v_layout)
         self.matches_h_layout.addWidget(self.singles_groupbox)
+        self.matches_h_layout.setStretch(0, 1)
 
         self.doubles_groupbox = QGroupBox()
         self.doubles_v_layout = QVBoxLayout()
@@ -62,6 +63,7 @@ class EditMatchWindow(QWidget):
         self.doubles_v_layout.addStretch()
         self.doubles_groupbox.setLayout(self.doubles_v_layout)
         self.matches_h_layout.addWidget(self.doubles_groupbox)
+        self.matches_h_layout.setStretch(1, 1)
 
         self.main_v_layout.addWidget(config_groupbox)
         self.main_v_layout.addLayout(self.matches_h_layout)
@@ -91,10 +93,6 @@ class EditMatchWindow(QWidget):
             self.warning_label.setText("有効な数字を入力してください")
 
         self.update()
-
-    def closeEvent(self, event):
-        super().closeEvent(event)
-        self.save_players()
 
     def render_players(self):
         for i in reversed(range(self.singles_gridlayout.count())):
@@ -155,6 +153,10 @@ class EditMatchWindow(QWidget):
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)
 
     def save_players(self):
+        # save university name
+        conf.set_university(self.university_name_lineedit.text())
+
+        # save player list
         for i in range(int(conf.read_number_of_singles())):
             lineedit_name = "lineedit_s" + str(i + 1)
             option_name = "S" + str(i+1)
@@ -167,3 +169,8 @@ class EditMatchWindow(QWidget):
             option_name_2 = "D" + str(i+1) + "p2"
             conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
             conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        self.save_players()
+        self.deleteLater()
