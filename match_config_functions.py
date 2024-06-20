@@ -12,7 +12,6 @@ def initialize():
     match_config.add_section("settings")
     match_config.set("settings", "match_date", "")
     match_config.set("settings", "university", "")
-    match_config.set("settings", "number_is_set", "False")
     match_config.set("settings", "number_of_singles", "0")
     match_config.set("settings", "number_of_doubles", "0")
 
@@ -36,15 +35,6 @@ def read_value(section, option):
     match_config.read(var.match_config_file_name)
     value = match_config[section][option]
     return value
-
-
-def set_number_is_set_to_true():
-    match_config = ConfigParser()
-    match_config.read(var.match_config_file_name)
-    match_config.set("settings", "number_is_set", "True")
-
-    with open(var.match_config_file_name, 'w') as configfile:
-        match_config.write(configfile)
 
 
 def set_university(university):

@@ -67,8 +67,7 @@ class EditMatchWindow(QWidget):
         self.main_v_layout.addLayout(self.matches_h_layout)
         self.setLayout(self.main_v_layout)
 
-        if conf.read_value("settings", "number_is_set") == "True":
-            self.render_players()
+        self.render_players()
 
     def apply_button_clicked(self):
         validation_1 = str.isdecimal(self.number_of_singles_lineedit.text())
@@ -76,29 +75,16 @@ class EditMatchWindow(QWidget):
         validation = validation_1 and validation_2
 
         if validation is True:
-            # save if it was called from apply button
-            for i in range(int(conf.read_number_of_singles())):
-                lineedit_name = "lineedit_s" + str(i + 1)
-                option_name = "S" + str(i + 1)
-                conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
-
-            for i in range(int(conf.read_number_of_doubles())):
-                lineedit_name_1 = "lineedit_d" + str(i + 1) + "_1"
-                lineedit_name_2 = "lineedit_d" + str(i + 1) + "_2"
-                option_name_1 = "D" + str(i + 1) + "p1"
-                option_name_2 = "D" + str(i + 1) + "p2"
-                conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
-                conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
-
-            # set number_is_set to True
-            conf.set_number_is_set_to_true()
-
+            # remove warning label text if it exists
             self.warning_label.setText("")
+            # save to match config
+            self.save_players()
 
             # write numbers to match config
             conf.set_number_of_singles(self.number_of_singles_lineedit.text())
             conf.set_number_of_doubles(self.number_of_doubles_lineedit.text())
 
+            # render window
             self.render_players()
 
         else:
@@ -108,18 +94,7 @@ class EditMatchWindow(QWidget):
 
     def closeEvent(self, event):
         super().closeEvent(event)
-        for i in range(int(conf.read_number_of_singles())):
-            lineedit_name = "lineedit_s" + str(i + 1)
-            option_name = "S" + str(i+1)
-            conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
-
-        for i in range(int(conf.read_number_of_doubles())):
-            lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
-            lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
-            option_name_1 = "D" + str(i+1) + "p1"
-            option_name_2 = "D" + str(i+1) + "p2"
-            conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
-            conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
+        self.save_players()
 
     def render_players(self):
         for i in reversed(range(self.singles_gridlayout.count())):
@@ -145,7 +120,6 @@ class EditMatchWindow(QWidget):
             try: lineedit.setText(conf.read_value("singles", option_name))
             except: lineedit.setText("")
             self.singles_gridlayout.addWidget(lineedit, i, 1)
-
 
         for i in range(number_of_doubles):
             # player1
@@ -179,3 +153,17 @@ class EditMatchWindow(QWidget):
             try: lineedit_2.setText(conf.read_value("doubles", option_name_2))
             except: lineedit_2.setText("")
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)
+
+    def save_players(self):
+        for i in range(int(conf.read_number_of_singles())):
+            lineedit_name = "lineedit_s" + str(i + 1)
+            option_name = "S" + str(i+1)
+            conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
+
+        for i in range(int(conf.read_number_of_doubles())):
+            lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
+            lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
+            option_name_1 = "D" + str(i+1) + "p1"
+            option_name_2 = "D" + str(i+1) + "p2"
+            conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
+            conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
