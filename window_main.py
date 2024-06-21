@@ -132,14 +132,14 @@ class MatchListWidget(QWidget):
 
             getattr(self, match_h_layout_name).addStretch()
 
-            setattr(self, add_button_name, QPushButton("動画を選択"))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
-
             setattr(self, video_count_label_name, QLabel(""))
             getattr(self, video_count_label_name).setStyleSheet("color:grey")
             getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
             getattr(self, video_count_label_name).hide()
+
+            setattr(self, add_button_name, QPushButton("動画を選択"))
+            getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
 
             setattr(self, menu_name, QMenu())
             getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
@@ -167,120 +167,6 @@ class MatchListWidget(QWidget):
             file_list_name = "file_list_" + match_id_low
             setattr(self, file_list_name, [])
 
-        """
-        for i in range(int(conf.read_number_of_singles())):
-            match_id_low = "s" + str(i+1)
-            match_id_hi = "S" + str(i+1)
-            match_frame_name = "match_frame_" + match_id_low
-            match_h_layout_name = "match_h_layout_" + match_id_low
-            player_name = conf.read_value("singles", match_id_hi)
-            label_name = "label_" + match_id_low
-            add_button_name = "add_button_" + match_id_low
-
-            menu_button_name = "menu_button_" + match_id_low
-            menu_name = "menu_" + match_id_low
-            video_count_label_name = "video_count_label_button_" + match_id_low
-
-            # create match frame and h layout
-            setattr(self, match_frame_name, QFrame())
-            getattr(self, match_frame_name).setFrameStyle(QFrame.Panel | QFrame.Plain)
-            getattr(self, match_frame_name).setLineWidth(1)
-            getattr(self, match_frame_name).setFixedHeight(50)
-
-            setattr(self, match_h_layout_name, QHBoxLayout())
-
-            # add content to h layout
-            setattr(self, label_name, QLabel("S"+str(i+1)+" "+player_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
-
-            getattr(self, match_h_layout_name).addStretch()
-
-            setattr(self, add_button_name, QPushButton("動画を選択"))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
-
-            setattr(self, video_count_label_name, QLabel(""))
-            getattr(self, video_count_label_name).setStyleSheet("color:grey")
-            getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, video_count_label_name).hide()
-
-            setattr(self, menu_name, QMenu())
-            getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
-            getattr(self, menu_name).addAction("選択をリセット", lambda m=match_id_low: self.remove_action_triggered(m))
-            setattr(self, menu_button_name, QPushButton("・"))
-            getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
-            getattr(self, menu_button_name).hide()
-
-            # add h layout to frame
-            getattr(self, match_frame_name).setLayout(getattr(self, match_h_layout_name))
-
-            self.match_list_v_layout.addWidget(getattr(self, match_frame_name))
-
-            # push button signal
-            self.match_list_dict.update({match_id_low: getattr(self, add_button_name)})
-
-            # create list for files
-            file_list_name = "file_list_" + match_id_low
-            setattr(self, file_list_name, [])
-
-        for i in range(int(conf.read_number_of_doubles())):
-            match_id_low = "d" + str(i+1)
-            match_id_hi = "D" + str(i+1)
-            match_frame_name = "match_frame_" + match_id_low
-            match_h_layout_name = "match_h_layout_" + match_id_low
-            player_name_1 = conf.read_value("doubles", match_id_hi + "p1")
-            player_name_2 = conf.read_value("doubles", match_id_hi + "p2")
-            label_name = "label_" + match_id_low
-            add_button_name = "add_button_" + match_id_low
-
-            menu_button_name = "menu_button_" + match_id_low
-            menu_name = "menu_" + match_id_low
-            video_count_label_name = "video_count_label_button_" + match_id_low
-
-            # create match frame and h layout
-            setattr(self, match_frame_name, QFrame())
-            getattr(self, match_frame_name).setFrameStyle(QFrame.Panel | QFrame.Plain)
-            getattr(self, match_frame_name).setLineWidth(1)
-            getattr(self, match_frame_name).setFixedHeight(50)
-
-            setattr(self, match_h_layout_name, QHBoxLayout())
-
-            # add content to h layout
-            setattr(self, label_name, QLabel("D" + str(i + 1) + " " + player_name_1 + " " + player_name_2))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
-
-            getattr(self, match_h_layout_name).addStretch()
-
-            setattr(self, add_button_name, QPushButton("動画を選択"))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
-
-            setattr(self, video_count_label_name, QLabel(""))
-            getattr(self, video_count_label_name).setStyleSheet("color:grey")
-            getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, video_count_label_name).hide()
-
-            setattr(self, menu_name, QMenu())
-            getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
-            getattr(self, menu_name).addAction("選択をリセット", lambda m=match_id_low: self.remove_action_triggered(m))
-            setattr(self, menu_button_name, QPushButton("・"))
-            getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
-            getattr(self, menu_button_name).hide()
-
-            # add h layout to frame
-            getattr(self, match_frame_name).setLayout(getattr(self, match_h_layout_name))
-
-            self.match_list_v_layout.addWidget(getattr(self, match_frame_name))
-
-            # push button signal
-            self.match_list_dict.update({match_id_low: getattr(self, add_button_name)})
-
-            # create list for files
-            file_list_name = "file_list_" + match_id_low
-            setattr(self, file_list_name, [])
-            """
 
         for button in self.match_list_dict:
             self.match_list_dict[button].clicked.connect(lambda _, b=button: self.add_button_clicked(b))
@@ -300,15 +186,24 @@ class MatchListWidget(QWidget):
             getattr(self, file_list_name).append(file)
 
         # change ui
-        video_count_text = str(len(getattr(self, file_list_name))) + "本の動画を選択済み"
+        video_count_text = ""
         label_name = "video_count_label_button_" + match_id
         menu_button_name = "menu_button_" + match_id
         add_button_name = "add_button_" + match_id
-        getattr(self, label_name).setText(video_count_text)
-        getattr(self, label_name).show()
-        getattr(self, menu_button_name).show()
-        getattr(self, add_button_name).hide()
-
+        if len(getattr(self, file_list_name)) != 0:
+            video_count_text = str(len(getattr(self, file_list_name))) + "本の動画を選択済み"
+            getattr(self, label_name).setStyleSheet("color:grey")
+            getattr(self, label_name).setText(video_count_text)
+            getattr(self, label_name).show()
+            getattr(self, menu_button_name).show()
+            getattr(self, add_button_name).hide()
+        else:
+            video_count_text = "動画を選択してください"
+            getattr(self, label_name).setStyleSheet("color:red")
+            getattr(self, label_name).setText(video_count_text)
+            getattr(self, label_name).show()
+            getattr(self, menu_button_name).hide()
+            getattr(self, add_button_name).show()
 
     def remove_action_triggered(self, match_id):
         # clear list
