@@ -85,3 +85,8 @@ def read_number_of_doubles():
     match_config.read(var.match_config_file_name)
     doubles_number = match_config["settings"]["number_of_doubles"]
     return doubles_number
+
+
+def if_match_exists():
+    if read_number_of_singles() == "0" and read_number_of_doubles() == "0": return False
+    else: return True

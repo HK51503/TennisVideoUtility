@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.main_window_match_list.setMinimumSize(300, 0)
         self.main_window_match_list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.main_window_match_list.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.render_match_list()
 
         h_layout = QHBoxLayout()
         h_layout.addWidget(self.main_window_match_list)
@@ -80,6 +81,12 @@ class MatchListWidget(QWidget):
         super().__init__()
         self.match_list_v_layout = QVBoxLayout()
         self.match_list_dict = {}
+
+        self.add_message_label = QLabel("試合を追加してください")
+        self.add_message_label.setStyleSheet("color:grey")
+        self.match_list_v_layout.addWidget(self.add_message_label)
+        if conf.if_match_exists() is False: self.add_message_label.show()
+        else: self.add_message_label.hide()
 
         match_id_low_list = []
         match_id_hi_list = []
@@ -166,7 +173,6 @@ class MatchListWidget(QWidget):
             # create list for files
             file_list_name = "file_list_" + match_id_low
             setattr(self, file_list_name, [])
-
 
         for button in self.match_list_dict:
             self.match_list_dict[button].clicked.connect(lambda _, b=button: self.add_button_clicked(b))
