@@ -1,5 +1,6 @@
 .idea/
 __pycache__/
 *.ini
+!sample.ini
 test.py
 .venv/
