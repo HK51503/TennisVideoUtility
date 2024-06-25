@@ -113,13 +113,14 @@ class EditMatchWindow(QWidget):
 
             self.singles_gridlayout.addWidget(getattr(self, label_name), i, 0)
 
-            option_name = "S" + str(i + 1)
+            section_name = "S" + str(i + 1)
             lineedit = getattr(self, lineedit_name)
-            try: lineedit.setText(conf.read_value("singles", option_name))
+            try: lineedit.setText(conf.read_value(section_name, "p"))
             except: lineedit.setText("")
             self.singles_gridlayout.addWidget(lineedit, i, 1)
 
         for i in range(number_of_doubles):
+            section_name = "D" + str(i+1)
             # player1
             label_name_1 = "label_d" + str(i+1) + "_1"
             label_text_1 = "D" + str(i+1) + "①"
@@ -130,9 +131,8 @@ class EditMatchWindow(QWidget):
 
             self.doubles_gridlayout.addWidget(getattr(self, label_name_1), i*2, 0)
 
-            option_name_1 = "D" + str(i + 1) + "p1"
             lineedit_1 = getattr(self, lineedit_name_1)
-            try: lineedit_1.setText(conf.read_value("doubles", option_name_1))
+            try: lineedit_1.setText(conf.read_value(section_name, "p1"))
             except: lineedit_1.setText("")
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_1), i*2, 1)
 
@@ -146,9 +146,8 @@ class EditMatchWindow(QWidget):
 
             self.doubles_gridlayout.addWidget(getattr(self, label_name_2), i*2+1, 0)
 
-            option_name_2 = "D" + str(i + 1) + "p2"
             lineedit_2 = getattr(self, lineedit_name_2)
-            try: lineedit_2.setText(conf.read_value("doubles", option_name_2))
+            try: lineedit_2.setText(conf.read_value(section_name, "p2"))
             except: lineedit_2.setText("")
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)
 
@@ -159,19 +158,19 @@ class EditMatchWindow(QWidget):
         # save player list
         for i in range(int(conf.read_number_of_singles())):
             lineedit_name = "lineedit_s" + str(i + 1)
-            option_name = "S" + str(i+1)
-            conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
-            conf.add_section(option_name)
+            section_name = "S" + str(i+1)
+            conf.add_section(section_name)
+            conf.set_value(section_name, "p", getattr(self, lineedit_name).text())
 
         for i in range(int(conf.read_number_of_doubles())):
             lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
             lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
-            option_name = "D" + str(i+1)
+            section_name = "D" + str(i+1)
             option_name_1 = "D" + str(i+1) + "p1"
             option_name_2 = "D" + str(i+1) + "p2"
-            conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
-            conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
-            conf.add_section(option_name)
+            conf.add_section(section_name)
+            conf.set_value(section_name, "p1", getattr(self, lineedit_name_1).text())
+            conf.set_value(section_name, "p2", getattr(self, lineedit_name_2).text())
 
     def closeEvent(self, event):
         super().closeEvent(event)

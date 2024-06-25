@@ -6,7 +6,7 @@ var.match_config_file_name = ""
 
 
 def initialize():
-    if var.sample_config_file_name == "":
+    if var.match_config_file_name == "":
         var.match_config_file_name = "match_" + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + ".ini"
         match_config = ConfigParser(allow_no_value=True)
 
@@ -16,11 +16,7 @@ def initialize():
         match_config.set("settings", "number_of_singles", "0")
         match_config.set("settings", "number_of_doubles", "0")
 
-        match_config.add_section("singles")
-        match_config.add_section("doubles")
-
         write_config(match_config)
-    else: var.match_config_file_name = var.sample_config_file_name
 
 
 def add_section(section):

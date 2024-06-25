@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QIcon
 from window_edit_match import EditMatchWindow
 import match_config_functions as conf
+import variables as var
 
 
 class MainWindow(QMainWindow):
@@ -88,6 +89,7 @@ class MatchListWidget(QWidget):
         if conf.if_match_exists() is False: self.add_message_label.show()
         else: self.add_message_label.hide()
 
+        # create id list
         match_id_low_list = []
         match_id_hi_list = []
         for i in range(int(conf.read_number_of_singles())):
@@ -104,7 +106,9 @@ class MatchListWidget(QWidget):
             match_id_low_list.append(match_id_low)
             match_id_hi_list.append(match_id_hi)
 
+        # initialize match list
         for i in range(len(match_id_low_list)):
+            # define variables
             match_id_low = match_id_low_list[i]
             match_id_hi = match_id_hi_list[i]
             singles_or_doubles = match_id_low[0]
@@ -113,10 +117,10 @@ class MatchListWidget(QWidget):
             player_name = ""
             player_name_1 = ""
             player_name_2 = ""
-            if singles_or_doubles == "s": player_name = conf.read_value("singles", match_id_hi)
+            if singles_or_doubles == "s": player_name = conf.read_value(match_id_hi, "p")
             else:
-                player_name_1 = conf.read_value("doubles", match_id_hi + "p1")
-                player_name_2 = conf.read_value("doubles", match_id_hi + "p2")
+                player_name_1 = conf.read_value(match_id_hi, "p1")
+                player_name_2 = conf.read_value(match_id_hi, "p2")
             label_name = "label_" + match_id_low
             add_button_name = "add_button_" + match_id_low
 
@@ -142,8 +146,6 @@ class MatchListWidget(QWidget):
             setattr(self, video_count_label_name, QLabel(""))
             getattr(self, video_count_label_name).setStyleSheet("color:grey")
             getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
-            getattr(self, video_count_label_name).hide()
 
             setattr(self, add_button_name, QPushButton("動画を選択"))
             getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
@@ -160,7 +162,24 @@ class MatchListWidget(QWidget):
             """
             getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
-            getattr(self, menu_button_name).hide()
+
+            if match_id_low in var.dict_file_list:
+                if var.dict_file_list[match_id_low] != []:
+                    getattr(self, video_count_label_name).setText(str(len(var.dict_file_list[match_id_low])) + "本の動画を選択済み")
+                    getattr(self, video_count_label_name).setStyleSheet("color:grey")
+                    getattr(self, video_count_label_name).show()
+                    getattr(self, add_button_name).hide()
+                    getattr(self, menu_button_name).show()
+                else:
+                    getattr(self, video_count_label_name).hide()
+                    getattr(self, add_button_name).show()
+                    getattr(self, menu_button_name).hide()
+
+            else:
+                var.dict_file_list[match_id_low] = []
+                getattr(self, video_count_label_name).hide()
+                getattr(self, add_button_name).show()
+                getattr(self, menu_button_name).hide()
 
             # add h layout to frame
             getattr(self, match_frame_name).setLayout(getattr(self, match_h_layout_name))
@@ -170,10 +189,6 @@ class MatchListWidget(QWidget):
             # push button signal
             self.match_list_dict.update({match_id_low: getattr(self, add_button_name)})
 
-            # create list for files
-            file_list_name = "file_list_" + match_id_low
-            setattr(self, file_list_name, [])
-
         for button in self.match_list_dict:
             self.match_list_dict[button].clicked.connect(lambda _, b=button: self.add_button_clicked(b))
 
@@ -182,39 +197,37 @@ class MatchListWidget(QWidget):
 
     def add_button_clicked(self, match_id):
         # file dialog settings
-        file_list_name = "file_list_" + match_id
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.exec()
 
         # save selected files to list
         for file in file_dialog.selectedFiles():
-            getattr(self, file_list_name).append(file)
+            var.dict_file_list[match_id].append(file)
 
         # change ui
         video_count_text = ""
-        label_name = "video_count_label_button_" + match_id
+        video_count_label_name = "video_count_label_button_" + match_id
         menu_button_name = "menu_button_" + match_id
         add_button_name = "add_button_" + match_id
-        if len(getattr(self, file_list_name)) != 0:
-            video_count_text = str(len(getattr(self, file_list_name))) + "本の動画を選択済み"
-            getattr(self, label_name).setStyleSheet("color:grey")
-            getattr(self, label_name).setText(video_count_text)
-            getattr(self, label_name).show()
+        if len(var.dict_file_list[match_id]) != 0:
+            video_count_text = str(len(var.dict_file_list[match_id])) + "本の動画を選択済み"
+            getattr(self, video_count_label_name).setStyleSheet("color:grey")
+            getattr(self, video_count_label_name).setText(video_count_text)
+            getattr(self, video_count_label_name).show()
             getattr(self, menu_button_name).show()
             getattr(self, add_button_name).hide()
         else:
             video_count_text = "動画を選択してください"
-            getattr(self, label_name).setStyleSheet("color:red")
-            getattr(self, label_name).setText(video_count_text)
-            getattr(self, label_name).show()
+            getattr(self, video_count_label_name).setStyleSheet("color:red")
+            getattr(self, video_count_label_name).setText(video_count_text)
+            getattr(self, video_count_label_name).show()
             getattr(self, menu_button_name).hide()
             getattr(self, add_button_name).show()
 
     def remove_action_triggered(self, match_id):
         # clear list
-        file_list_name = "file_list_" + match_id
-        getattr(self, file_list_name).clear()
+        var.dict_file_list[match_id].clear()
 
         # update ui
         label_name = "video_count_label_button_" + match_id
