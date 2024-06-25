@@ -23,6 +23,13 @@ def initialize():
     else: var.match_config_file_name = var.sample_config_file_name
 
 
+def add_section(section):
+    match_config = ConfigParser()
+    read_config(match_config)
+    if match_config.has_section(section) is False: match_config.add_section(section)
+    write_config(match_config)
+
+
 def set_value(section, option, value):
     match_config = ConfigParser()
     read_config(match_config)

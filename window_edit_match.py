@@ -161,14 +161,17 @@ class EditMatchWindow(QWidget):
             lineedit_name = "lineedit_s" + str(i + 1)
             option_name = "S" + str(i+1)
             conf.set_value("singles", option_name, getattr(self, lineedit_name).text())
+            conf.add_section(option_name)
 
         for i in range(int(conf.read_number_of_doubles())):
             lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
             lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
+            option_name = "D" + str(i+1)
             option_name_1 = "D" + str(i+1) + "p1"
             option_name_2 = "D" + str(i+1) + "p2"
             conf.set_value("doubles", option_name_1, getattr(self, lineedit_name_1).text())
             conf.set_value("doubles", option_name_2, getattr(self, lineedit_name_2).text())
+            conf.add_section(option_name)
 
     def closeEvent(self, event):
         super().closeEvent(event)
