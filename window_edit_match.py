@@ -2,12 +2,14 @@ from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QGroupBox,
     QLabel, QLineEdit, QGridLayout
 )
+from PySide6.QtCore import Qt
 import match_config_functions as conf
 
 
 class EditMatchWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.setWindowModality(Qt.ApplicationModal)
         self.main_v_layout = QVBoxLayout()
 
         # Edit match settings

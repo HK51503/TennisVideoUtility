@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QFrame,
-    QLabel, QFileDialog, QMenu, QSizePolicy
+    QLabel, QFileDialog, QMenu
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap, QIcon
 from window_edit_match import EditMatchWindow
+from window_edit_settings import EditSettingsWindow
 import match_config_functions as conf
 import variables as var
 
@@ -14,6 +14,9 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.app = app
+        self.edit_match_window = EditMatchWindow()
+        self.edit_settings_window = EditSettingsWindow()
+
         self.setWindowTitle("Tennis Video Utility V1")
         self.resize(500, 400)
         main_window_central_widget = QWidget()
@@ -55,7 +58,8 @@ class MainWindow(QMainWindow):
         self.edit_match_window.destroyed.connect(self.render_match_list)
 
     def edit_settings_button_clicked(self):
-        print("3")
+        self.edit_settings_window = EditSettingsWindow()
+        self.edit_settings_window.show()
 
     def quit_button_clicked(self):
         quit_dialog = QMessageBox()
@@ -164,8 +168,9 @@ class MatchListWidget(QWidget):
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
 
             if match_id_low in var.dict_file_list:
-                if var.dict_file_list[match_id_low] != []:
-                    getattr(self, video_count_label_name).setText(str(len(var.dict_file_list[match_id_low])) + "本の動画を選択済み")
+                if var.dict_file_list[match_id_low]:
+                    getattr(self, video_count_label_name).setText(str(
+                        len(var.dict_file_list[match_id_low])) + "本の動画を選択済み")
                     getattr(self, video_count_label_name).setStyleSheet("color:grey")
                     getattr(self, video_count_label_name).show()
                     getattr(self, add_button_name).hide()
@@ -206,7 +211,6 @@ class MatchListWidget(QWidget):
             var.dict_file_list[match_id].append(file)
 
         # change ui
-        video_count_text = ""
         video_count_label_name = "video_count_label_button_" + match_id
         menu_button_name = "menu_button_" + match_id
         add_button_name = "add_button_" + match_id
