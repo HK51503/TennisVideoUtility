@@ -96,6 +96,7 @@ def if_match_exists():
 def read_config(match_config):
     match_config.read(var.match_config_file_name, encoding="utf-8")
 
+
 def write_config(match_config):
     with open(var.match_config_file_name, 'w', encoding="utf-8") as configfile:
         match_config.write(configfile)

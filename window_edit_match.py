@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QLabel, QLineEdit, QGridLayout
 )
 from PySide6.QtCore import Qt
-import match_config_functions as conf
+import functions_match_config as conf
 
 
 class EditMatchWindow(QWidget):

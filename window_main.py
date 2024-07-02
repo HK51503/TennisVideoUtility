@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from window_edit_match import EditMatchWindow
 from window_edit_settings import EditSettingsWindow
-import match_config_functions as conf
+import functions_match_config as conf
 import variables as var
 
 

@@ -2,5 +2,6 @@
 __pycache__/
 *.ini
 !sample.ini
+!config.ini
 test.py
 .venv/

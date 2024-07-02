@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QApplication
 from window_main import MainWindow
 import sys
-import match_config_functions as conf
+import functions_match_config as conf
 import variables as var
 import argparse
 
