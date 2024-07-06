@@ -61,12 +61,29 @@ class VideoSettingsTab(QWidget):
 
         stitch_videos_true_button.setEnabled(False)
 
-        # add central line
+        # keep original file setting
+        self.keep_original_setting_button_group = QButtonGroup()
+        keep_original_true_button = QRadioButton("残す")
+        keep_original_false_button = QRadioButton("残さない")
+        self.keep_original_setting_button_group.addButton(keep_original_true_button, 1)
+        self.keep_original_setting_button_group.addButton(keep_original_false_button, 2)
+        self.keep_original_setting_button_group.buttonClicked.connect(self.keep_original_setting_button_clicked)
+        if settings.read_value("video_settings", "keep_original") == "True":
+            keep_original_true_button.setChecked(True)
+        else:
+            keep_original_false_button.setChecked(True)
+
+        video_setting_layout.addWidget(QLabel("元ファイルを"), 6, 0)
+        video_setting_layout.addWidget(keep_original_true_button, 6, 1)
+        video_setting_layout.addWidget(keep_original_false_button, 7, 1)
+
+        # add separator line
         line = QFrame()
         line.setFrameStyle(QFrame.HLine)
         line.setLineWidth(0)
         line.setMidLineWidth(0)
         video_setting_layout.addWidget(line, 2, 0, 1, 2)
+        video_setting_layout.addWidget(line, 5, 0, 1, 2)
 
         video_setting_groupbox.setLayout(video_setting_layout)
         main_v_layout.addWidget(video_setting_groupbox)
@@ -82,3 +99,9 @@ class VideoSettingsTab(QWidget):
             settings.set_value("video_settings", "stitch_videos", "True")
         else:
             settings.set_value("video_settings", "stitch_videos", "False")
+
+    def keep_original_setting_button_clicked(self):
+        if self.keep_original_setting_button_group.checkedId() == 1:
+            settings.set_value("video_settings", "keep_original", "True")
+        else:
+            settings.set_value("video_settings", "keep_original", "False")
