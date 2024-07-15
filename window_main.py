@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from window_edit_match import EditMatchWindow
 from window_edit_settings import EditSettingsWindow
+from window_progress import ProgressWindow
 import functions_match_config as conf
 import variables as var
 
@@ -14,7 +15,6 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.app = app
-        self.edit_match_window = EditMatchWindow()
         self.edit_settings_window = EditSettingsWindow()
 
         self.setWindowTitle("Tennis Video Utility V1")
@@ -50,7 +50,21 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(main_window_central_widget)
 
     def start_button_clicked(self):
-        print("1")
+        confirmation_dialog = QMessageBox()
+        confirmation_dialog.setWindowTitle("")
+        confirmation_dialog.setIcon(QMessageBox.Information)
+        confirmation_dialog.setText("開始しますか？")
+        confirmation_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        confirmation_dialog.setDefaultButton(QMessageBox.Yes)
+        confirmation_dialog.setButtonText(QMessageBox.Yes, "開始")
+        confirmation_dialog.setButtonText(QMessageBox.No, "戻る")
+
+        ret = confirmation_dialog.exec()
+
+        if ret == QMessageBox.Yes:
+            var.university_name = conf.read_value("settings", "university")
+            self.progress_window = ProgressWindow()
+            self.progress_window.show()
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()
@@ -58,7 +72,6 @@ class MainWindow(QMainWindow):
         self.edit_match_window.destroyed.connect(self.render_match_list)
 
     def edit_settings_button_clicked(self):
-        self.edit_settings_window = EditSettingsWindow()
         self.edit_settings_window.show()
 
     def quit_button_clicked(self):
@@ -121,7 +134,8 @@ class MatchListWidget(QWidget):
             player_name = ""
             player_name_1 = ""
             player_name_2 = ""
-            if singles_or_doubles == "s": player_name = conf.read_value(match_id_hi, "p")
+            if singles_or_doubles == "s":
+                player_name = conf.read_value(match_id_hi, "p")
             else:
                 player_name_1 = conf.read_value(match_id_hi, "p1")
                 player_name_2 = conf.read_value(match_id_hi, "p2")
@@ -141,8 +155,15 @@ class MatchListWidget(QWidget):
             setattr(self, match_h_layout_name, QHBoxLayout())
 
             # add content to h layout
-            if singles_or_doubles == "s": setattr(self, label_name, QLabel(match_id_hi + " " + player_name))
-            else: setattr(self, label_name, QLabel(match_id_hi + " " + player_name_1 + " " + player_name_2))
+            # add match id to dictionary
+            if singles_or_doubles == "s":
+                match_id_full = match_id_hi + " " + player_name
+                setattr(self, label_name, QLabel(match_id_full))
+                var.dict_match_id_full[match_id_low] = match_id_full
+            else:
+                match_id_full = match_id_hi + " " + player_name_1 + " " + player_name_2
+                setattr(self, label_name, QLabel(match_id_full))
+                var.dict_match_id_full[match_id_low] = match_id_full
             getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
 
             getattr(self, match_h_layout_name).addStretch()

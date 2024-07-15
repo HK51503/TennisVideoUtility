@@ -34,3 +34,4 @@ if __name__ == "__main__":
     write_config(settings_config)
     set_value("video_settings", "youtube_upload", "False")
     set_value("video_settings", "stitch_videos", "False")
+    set_value("video_settings", "keep_original", "False")
