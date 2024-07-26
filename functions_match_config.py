@@ -7,11 +7,12 @@ var.match_config_file_name = ""
 
 def initialize():
     if var.match_config_file_name == "":
+        var.date = str(datetime.date.today())
         var.match_config_file_name = "match_" + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + ".ini"
         match_config = ConfigParser(allow_no_value=True)
 
         match_config.add_section("settings")
-        match_config.set("settings", "match_date", "")
+        match_config.set("settings", "match_date", var.date)
         match_config.set("settings", "university", "")
         match_config.set("settings", "number_of_singles", "0")
         match_config.set("settings", "number_of_doubles", "0")

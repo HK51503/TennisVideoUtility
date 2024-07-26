@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QGroupBox,
-    QLabel, QLineEdit, QGridLayout
+    QLabel, QLineEdit, QGridLayout, QCalendarWidget
 )
 from PySide6.QtCore import Qt
 import functions_match_config as conf
@@ -18,31 +18,38 @@ class EditMatchWindow(QWidget):
         grid_layout = QGridLayout()
 
         grid_layout.addWidget(QLabel("大学名 : "), 0, 0)
-        grid_layout.addWidget(QLabel("シングルスの本数 : "), 1, 0)
-        grid_layout.addWidget(QLabel("ダブルスの本数 : "), 2, 0)
+        grid_layout.addWidget(QLabel("日付 : "), 1, 0)
+        grid_layout.addWidget(QLabel("シングルスの本数 : "), 2, 0)
+        grid_layout.addWidget(QLabel("ダブルスの本数 : "), 3, 0)
 
         self.university_name_lineedit = QLineEdit(conf.read_university())
-        grid_layout.addWidget(self.university_name_lineedit, 0, 1)
+        grid_layout.addWidget(self.university_name_lineedit, 0, 1, 1, 2)
+
+        self.match_date_lineedit = QLineEdit(conf.read_value("settings", "match_date"))
+        self.match_date_button = QPushButton("あ")
+        self.match_date_button.clicked.connect(self.match_date_button_clicked)
+        grid_layout.addWidget(self.match_date_lineedit, 1, 1)
+        grid_layout.addWidget(self.match_date_button, 1, 2)
 
         if conf.read_number_of_singles() == "0":
             self.number_of_singles_lineedit = QLineEdit("")
         else:
             self.number_of_singles_lineedit = QLineEdit(conf.read_number_of_singles())
-        grid_layout.addWidget(self.number_of_singles_lineedit, 1, 1)
+        grid_layout.addWidget(self.number_of_singles_lineedit, 2, 1, 1, 2)
 
         if conf.read_number_of_doubles() == "0":
             self.number_of_doubles_lineedit = QLineEdit("")
         else:
             self.number_of_doubles_lineedit = QLineEdit(conf.read_number_of_doubles())
-        grid_layout.addWidget(self.number_of_doubles_lineedit, 2, 1)
+        grid_layout.addWidget(self.number_of_doubles_lineedit, 3, 1, 1, 2)
 
         self.warning_label = QLabel("")
         self.warning_label.setStyleSheet("color: red;")
-        grid_layout.addWidget(self.warning_label, 1, 2)
+        grid_layout.addWidget(self.warning_label, 2, 3)
         apply_button = QPushButton()
         apply_button.setText("本数を適用")
         apply_button.clicked.connect(self.apply_button_clicked)
-        grid_layout.addWidget(apply_button, 2, 2)
+        grid_layout.addWidget(apply_button, 3, 3)
 
         config_groupbox.setLayout(grid_layout)
 
@@ -82,7 +89,7 @@ class EditMatchWindow(QWidget):
             # remove warning label text if it exists
             self.warning_label.setText("")
             # save to match config
-            self.save_players()
+            self.save_match_config()
 
             # write numbers to match config
             conf.set_number_of_singles(self.number_of_singles_lineedit.text())
@@ -153,9 +160,10 @@ class EditMatchWindow(QWidget):
             except: lineedit_2.setText("")
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)
 
-    def save_players(self):
+    def save_match_config(self):
         # save university name
         conf.set_university(self.university_name_lineedit.text())
+        conf.set_value("settings", "match_date", self.match_date_lineedit.text())
 
         # save player list
         for i in range(int(conf.read_number_of_singles())):
@@ -174,7 +182,25 @@ class EditMatchWindow(QWidget):
             conf.set_value(section_name, "p1", getattr(self, lineedit_name_1).text())
             conf.set_value(section_name, "p2", getattr(self, lineedit_name_2).text())
 
+    def match_date_button_clicked(self):
+        self.calendar_window = EditMatchDateWindow()
+        self.calendar_window.show()
+
     def closeEvent(self, event):
         super().closeEvent(event)
-        self.save_players()
+        self.save_match_config()
         self.deleteLater()
+
+
+class EditMatchDateWindow(QCalendarWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowModality(Qt.ApplicationModal)
+        """
+        main_h_layout = QHBoxLayout()
+        self.setLayout(main_h_layout)
+
+        calendar_widget = QCalendarWidget()
+        main_h_layout.addWidget(calendar_widget)
+        """
+        print("1")
