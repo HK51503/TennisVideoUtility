@@ -1,8 +1,20 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout
 import functions_settings_config as conf
 import rename_tool
 import os
+import logging
 import variables as var
+
+
+class QTextEditLogger(logging.Handler):
+    def __init__(self, parent):
+        super().__init__()
+        self.widget = QPlainTextEdit(parent)
+        self.widget.setReadOnly(True)
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.widget.appendPlainText(msg)
 
 
 class ProgressWindow(QWidget):
@@ -10,6 +22,14 @@ class ProgressWindow(QWidget):
 
     def __init__(self):
         super().__init__()
+        logger_text_edit = QTextEditLogger(self)
+        logger_text_edit.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logging.getLogger().addHandler(logger_text_edit)
+
+        main_v_layout = QVBoxLayout()
+        main_v_layout.addWidget(logger_text_edit.widget)
+
+        self.setLayout(main_v_layout)
         self.main_process()
 
     def main_process(self):

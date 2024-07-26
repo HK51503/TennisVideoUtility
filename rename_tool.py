@@ -2,6 +2,9 @@ import variables as var
 import os
 import subprocess
 from datetime import date
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_match_folder(directory):
