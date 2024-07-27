@@ -8,6 +8,7 @@ from window_edit_settings import EditSettingsWindow
 from window_progress import ProgressWindow
 import functions_match_config as conf
 import variables as var
+import os
 
 
 class MainWindow(QMainWindow):
@@ -229,7 +230,11 @@ class MatchListWidget(QWidget):
 
         # save selected files to list
         for file in file_dialog.selectedFiles():
-            var.dict_file_list[match_id].append(file)
+            if file not in var.dict_file_list[match_id]:
+                var.dict_file_list[match_id].append(file)
+
+        # sort files by creation date
+        var.dict_file_list[match_id].sort(key=lambda x: os.path.getmtime(x))
 
         # change ui
         video_count_label_name = "video_count_label_button_" + match_id
