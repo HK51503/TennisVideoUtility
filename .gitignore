@@ -5,3 +5,6 @@ __pycache__/
 !config.ini
 test.py
 .venv/
+main.dist/
+main.build/
+main.onefile-build/
