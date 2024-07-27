@@ -2,8 +2,10 @@ from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QGroupBox,
     QLabel, QLineEdit, QGridLayout, QCalendarWidget
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QDate
+from PySide6.QtGui import QValidator
 import functions_match_config as conf
+import variables as var
 
 
 class EditMatchWindow(QWidget):
@@ -26,6 +28,7 @@ class EditMatchWindow(QWidget):
         grid_layout.addWidget(self.university_name_lineedit, 0, 1, 1, 2)
 
         self.match_date_lineedit = QLineEdit(conf.read_value("settings", "match_date"))
+        self.match_date_lineedit.setReadOnly(True)
         self.match_date_button = QPushButton("あ")
         self.match_date_button.clicked.connect(self.match_date_button_clicked)
         grid_layout.addWidget(self.match_date_lineedit, 1, 1)
@@ -163,7 +166,7 @@ class EditMatchWindow(QWidget):
     def save_match_config(self):
         # save university name
         conf.set_university(self.university_name_lineedit.text())
-        conf.set_value("settings", "match_date", self.match_date_lineedit.text())
+        conf.set_value("settings", "match_date", var.match_date)
 
         # save player list
         for i in range(int(conf.read_number_of_singles())):
@@ -185,6 +188,11 @@ class EditMatchWindow(QWidget):
     def match_date_button_clicked(self):
         self.calendar_window = EditMatchDateWindow()
         self.calendar_window.show()
+        self.calendar_window.calendar_widget.selectionChanged.connect(self.update_date)
+
+    def update_date(self):
+        self.match_date_lineedit.setText(QDate.toString(self.calendar_window.calendar_widget.selectedDate(), format=Qt.ISODate))
+        self.update()
 
     def closeEvent(self, event):
         super().closeEvent(event)
@@ -192,15 +200,19 @@ class EditMatchWindow(QWidget):
         self.deleteLater()
 
 
-class EditMatchDateWindow(QCalendarWidget):
+class EditMatchDateWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowModality(Qt.ApplicationModal)
-        """
-        main_h_layout = QHBoxLayout()
-        self.setLayout(main_h_layout)
 
-        calendar_widget = QCalendarWidget()
-        main_h_layout.addWidget(calendar_widget)
-        """
-        print("1")
+        self.main_h_layout = QHBoxLayout()
+        self.setLayout(self.main_h_layout)
+
+        self.calendar_widget = QCalendarWidget()
+        self.calendar_widget.setSelectedDate(QDate.fromString(var.match_date, format=Qt.ISODate))
+        self.main_h_layout.addWidget(self.calendar_widget)
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        var.match_date = QDate.toString(self.calendar_widget.selectedDate(), format=Qt.ISODate)
+        self.deleteLater()
