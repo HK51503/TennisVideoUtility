@@ -5,17 +5,18 @@ import functions_match_config as conf
 import variables as var
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-c", "--config", help="Add match config file.", required=False, default="")
-args = parser.parse_args()
-if args.config:
-    var.match_config_file_name = args.config
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", help="Add match config file.", required=False, default="")
+    args = parser.parse_args()
+    if args.config:
+        var.match_config_file_name = args.config
 
-conf.initialize()
+    conf.initialize()
 
-app = QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
-window = MainWindow(app)
-window.show()
+    window = MainWindow(app)
+    window.show()
 
-app.exec()
+    app.exec()
