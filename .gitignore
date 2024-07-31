@@ -8,3 +8,4 @@ test.py
 main.dist/
 main.build/
 main.onefile-build/
+.DS_Store
