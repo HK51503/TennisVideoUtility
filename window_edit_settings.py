@@ -45,7 +45,7 @@ class VideoSettingsTab(QWidget):
 
         # stitch videos using ffmpeg setting
         self.stitch_videos_setting_button_group = QButtonGroup()
-        stitch_videos_true_button = QRadioButton("する（Coming Soon!）")
+        stitch_videos_true_button = QRadioButton("する")
         stitch_videos_false_button = QRadioButton("しない")
         self.stitch_videos_setting_button_group.addButton(stitch_videos_true_button, 1)
         self.stitch_videos_setting_button_group.addButton(stitch_videos_false_button, 2)
@@ -58,8 +58,6 @@ class VideoSettingsTab(QWidget):
         video_setting_layout.addWidget(QLabel("動画を結合"), 3, 0)
         video_setting_layout.addWidget(stitch_videos_true_button, 3, 1)
         video_setting_layout.addWidget(stitch_videos_false_button, 4, 1)
-
-        stitch_videos_true_button.setEnabled(False)
 
         # keep original file setting
         self.keep_original_setting_button_group = QButtonGroup()

@@ -1,14 +1,14 @@
 import variables as var
 import os
 import subprocess
-from datetime import date
 import logging
+import functions_match_config as conf
 
 logger = logging.getLogger(__name__)
 
 
 def create_match_folder(directory):
-    univ_folder_name = str(date.today()) + " " + var.university_name
+    univ_folder_name = str(conf.read_value("settings", "match_date") + " " + var.university_name)
     university_folder_path = os.path.join(directory, univ_folder_name)
     if not (os.path.exists(university_folder_path)):
         os.mkdir(university_folder_path)
@@ -26,6 +26,14 @@ def rename_videos(destination_directory_path):
             fn, file_extension = os.path.splitext(original_file_path)
             destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + " " + str(index + 1) + file_extension
             rename_file(destination_file_name, original_file_path, destination_directory_path)
+
+
+def rename_stitched_videos(destination_directory_path):
+    for match_id in var.dict_stitched_file:
+        fn, file_extension = os.path.splitext(var.dict_stitched_file[match_id])
+        destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + file_extension
+        rename_file(destination_file_name, var.dict_stitched_file[match_id], destination_directory_path)
+
 
 
 if __name__ == "__main__":

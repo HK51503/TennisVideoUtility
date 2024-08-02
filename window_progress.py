@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout
 import functions_settings_config as conf
 import rename_tool
+import ffmpeg_tool
 import os
 import logging
-import variables as var
 
 
 class QTextEditLogger(logging.Handler):
@@ -41,5 +41,18 @@ class ProgressWindow(QWidget):
             match_directory_path = rename_tool.create_match_folder(current_directory)
             rename_tool.rename_videos(match_directory_path)
             print("finished")
+        elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "False":
+            current_directory = os.getcwd()
+            tmp_folder_path = os.path.join(current_directory, "tmp")
+            if not (os.path.exists(tmp_folder_path)):
+                os.mkdir(tmp_folder_path)
+
+            ffmpeg_tool.stitch_videos(tmp_folder_path)
+            match_directory_path = rename_tool.create_match_folder(current_directory)
+            rename_tool.rename_stitched_videos(match_directory_path)
+            print("finished")
         else:
             print("Not Supported")
+
+    def closeEvent(self, event):
+        self.deleteLater()
