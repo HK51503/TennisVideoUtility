@@ -1,11 +1,13 @@
 import ffmpeg
 import variables as var
 import os
+import datetime
 
 
-def stitch_videos(destination_path):
+def stitch_videos(destination_path, timestamp_file_path):
     for match_id in var.dict_file_list:
         if len(var.dict_file_list[match_id]) != 0:
+            # stitch videos
             input_paths = var.dict_file_list[match_id]
             f = open("concat.txt", "w")
             f.writelines([("file %s\n" % input_path) for input_path in input_paths])
@@ -18,3 +20,26 @@ def stitch_videos(destination_path):
             os.remove("concat.txt")
 
             var.dict_stitched_file[match_id] = file_path
+
+            # create txt file with timestamps
+            f = open(timestamp_file_path, "a")
+            f.write(var.dict_match_id_full[match_id] + "\n")
+            t = 0
+            for index, file in enumerate(var.dict_file_list[match_id]):
+                time = int(t)
+                f.write(str(datetime.timedelta(seconds=time)) + " " + str(index+1) + "\n")
+                duration = get_video_duration(file)
+                t += duration
+            f.write("\n")
+            f.close()
+
+
+def get_video_duration(video_path):
+    video_info = ffmpeg.probe(video_path)
+    duration = float(video_info["streams"][0]["duration"])
+    return duration
+
+
+if __name__ == "__main__":
+    path = "/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/tmp/s1.mp4"
+    get_video_duration(path)

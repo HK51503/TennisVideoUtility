@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (
     QTabWidget, QWidget, QRadioButton, QPushButton, QLabel, QGroupBox, QVBoxLayout, QGridLayout,
     QButtonGroup, QFrame
 )
+from PySide6.QtCore import Qt
 import functions_settings_config as settings
 
 
@@ -9,6 +10,7 @@ class EditSettingsWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setWindowModality(Qt.ApplicationModal)
         tab_widget = QTabWidget()
         main_v_layout = QVBoxLayout()
         tab_widget.addTab(VideoSettingsTab(), "動画設定")
