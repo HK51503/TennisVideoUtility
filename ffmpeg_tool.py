@@ -18,16 +18,3 @@ def stitch_videos(destination_path):
             os.remove("concat.txt")
 
             var.dict_stitched_file[match_id] = file_path
-
-
-"""
-if __name__ == '__main__':
-    var.dict_file_list = {
-        "s1": ["/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/sample1.mp4",
-               "/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/sample2.mp4",
-               "/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/sample3.mp4"]
-    }
-
-    destination_path = "/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/tmp"
-    stitch_videos(destination_path)
-"""
