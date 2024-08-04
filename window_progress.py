@@ -44,11 +44,24 @@ class ProgressWindow(QWidget):
             match_directory_path = rename_tool.create_match_folder(current_directory)
             rename_tool.rename_videos(match_directory_path)
             print("finished")
+        elif is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "True":
+            current_directory = os.getcwd()
+            match_directory_path = rename_tool.create_match_folder(current_directory)
+            rename_tool.copy_videos(match_directory_path)
+            rename_tool.rename_videos(match_directory_path)
+            print("finished")
         elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "False":
             current_directory = os.getcwd()
             match_directory_path = rename_tool.create_match_folder(current_directory)
             timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-            ffmpeg_tool.stitch_videos(match_directory_path, timestamp_file_path)
+            ffmpeg_tool.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
+            rename_tool.rename_stitched_videos(match_directory_path)
+            print("finished")
+        elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "True":
+            current_directory = os.getcwd()
+            match_directory_path = rename_tool.create_match_folder(current_directory)
+            timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
+            ffmpeg_tool.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
             rename_tool.rename_stitched_videos(match_directory_path)
             print("finished")
         else:

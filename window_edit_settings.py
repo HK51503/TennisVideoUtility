@@ -63,7 +63,7 @@ class VideoSettingsTab(QWidget):
 
         # keep original file setting
         self.keep_original_setting_button_group = QButtonGroup()
-        keep_original_true_button = QRadioButton("残す（Coming Soon!）")
+        keep_original_true_button = QRadioButton("残す")
         keep_original_false_button = QRadioButton("残さない")
         self.keep_original_setting_button_group.addButton(keep_original_true_button, 1)
         self.keep_original_setting_button_group.addButton(keep_original_false_button, 2)
@@ -76,8 +76,6 @@ class VideoSettingsTab(QWidget):
         video_setting_layout.addWidget(QLabel("元ファイルを"), 6, 0)
         video_setting_layout.addWidget(keep_original_true_button, 6, 1)
         video_setting_layout.addWidget(keep_original_false_button, 7, 1)
-
-        keep_original_true_button.setEnabled(False)
 
         # add separator line
         line = QFrame()

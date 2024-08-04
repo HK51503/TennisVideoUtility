@@ -4,13 +4,12 @@ import os
 import datetime
 
 
-def stitch_videos(destination_path, timestamp_file_path):
+def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
     for match_id in var.dict_file_list:
         if len(var.dict_file_list[match_id]) != 0:
             # stitch videos
-            input_paths = var.dict_file_list[match_id]
             f = open("concat.txt", "w")
-            f.writelines([("file %s\n" % input_path) for input_path in input_paths])
+            f.writelines([("file %s\n" % input_path) for input_path in var.dict_file_list[match_id]])
             f.close()
             fn, extension = os.path.splitext(var.dict_file_list[match_id][0])
             file_name = match_id + extension
@@ -32,6 +31,11 @@ def stitch_videos(destination_path, timestamp_file_path):
                 t += duration
             f.write("\n")
             f.close()
+
+            # remove original if keep original is false
+            if is_keep_original == "False":
+                for file in var.dict_file_list[match_id]:
+                    os.remove(file)
 
 
 def get_video_duration(video_path):

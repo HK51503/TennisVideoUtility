@@ -3,6 +3,7 @@ import os
 import subprocess
 import logging
 import functions_match_config as conf
+import shutil
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,14 @@ def create_match_folder(directory):
 def rename_file(destination_file_name, original_file_path, destination_directory_path):
     destination_file_path = os.path.join(destination_directory_path, destination_file_name)
     os.rename(original_file_path, destination_file_path)
+
+
+def copy_videos(destination_directory_path):
+    for match_id in var.dict_file_list:
+        for index, original_file_path in enumerate(var.dict_file_list[match_id]):
+            file_name = os.path.basename(original_file_path)
+            shutil.copy2(original_file_path, destination_directory_path)
+            var.dict_file_list[match_id][index] = os.path.join(destination_directory_path, file_name)
 
 
 def rename_videos(destination_directory_path):
