@@ -2,6 +2,7 @@ import ffmpeg
 import variables as var
 import os
 import datetime
+import logging
 
 
 def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
@@ -14,7 +15,9 @@ def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
             fn, extension = os.path.splitext(var.dict_file_list[match_id][0])
             file_name = match_id + extension
             file_path = os.path.join(destination_path, file_name)
+            logging.info("Concatenating " + str(len(var.dict_file_list[match_id])) + " videos")
             ffmpeg.input("concat.txt", format="concat", safe="0").output(file_path, c="copy").run()
+            logging.info("Done concatenating")
 
             os.remove("concat.txt")
 
@@ -36,6 +39,7 @@ def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
             if is_keep_original == "False":
                 for file in var.dict_file_list[match_id]:
                     os.remove(file)
+                    logging.info("Finished removing file: " + os.path.basename(file))
 
 
 def get_video_duration(video_path):

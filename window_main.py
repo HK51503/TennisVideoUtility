@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
             var.dict_file_list[match_id].clear()
         for match_id in var.dict_stitched_file:
             var.dict_stitched_file[match_id] = ""
-        self.progress_window.destroyed.connect(self.render_match_list)
+        self.progress_window.signal.connect(self.render_match_list)
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()

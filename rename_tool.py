@@ -5,14 +5,16 @@ import logging
 import functions_match_config as conf
 import shutil
 
-logger = logging.getLogger(__name__)
-
 
 def create_match_folder(directory):
-    univ_folder_name = str(conf.read_value("settings", "match_date") + " " + var.university_name)
-    university_folder_path = os.path.join(directory, univ_folder_name)
+    university_folder_name = str(conf.read_value("settings", "match_date") + " " + var.university_name)
+    university_folder_path = os.path.join(directory, university_folder_name)
+    logging.info("Checking if folder exists")
     if not (os.path.exists(university_folder_path)):
         os.mkdir(university_folder_path)
+        logging.info("Creating folder: " + university_folder_name)
+    else:
+        logging.info("Folder already exists")
     return university_folder_path
 
 
@@ -25,7 +27,9 @@ def copy_videos(destination_directory_path):
     for match_id in var.dict_file_list:
         for index, original_file_path in enumerate(var.dict_file_list[match_id]):
             file_name = os.path.basename(original_file_path)
+            logging.info("Copying file: " + file_name)
             shutil.copy2(original_file_path, destination_directory_path)
+            logging.info("Finished copying: " + file_name)
             var.dict_file_list[match_id][index] = os.path.join(destination_directory_path, file_name)
 
 
@@ -35,6 +39,7 @@ def rename_videos(destination_directory_path):
             fn, file_extension = os.path.splitext(original_file_path)
             destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + " " + str(index + 1) + file_extension
             rename_file(destination_file_name, original_file_path, destination_directory_path)
+            logging.info("Finished renaming file:" + os.path.basename(original_file_path))
 
 
 def rename_stitched_videos(destination_directory_path):
@@ -42,6 +47,7 @@ def rename_stitched_videos(destination_directory_path):
         fn, file_extension = os.path.splitext(var.dict_stitched_file[match_id])
         destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + file_extension
         rename_file(destination_file_name, var.dict_stitched_file[match_id], destination_directory_path)
+        logging.info("Finished renaming file:" + os.path.basename(var.dict_stitched_file[match_id]))
 
 
 
