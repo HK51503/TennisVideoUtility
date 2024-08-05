@@ -4,6 +4,7 @@ import sys
 import functions_match_config as conf
 import variables as var
 import argparse
+import darkdetect
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add match config file.", required=False, default="")
@@ -12,6 +13,8 @@ if args.config:
     var.match_config_file_name = args.config
 
 conf.initialize()
+
+var.theme = darkdetect.theme()
 
 app = QApplication(sys.argv)
 

@@ -29,7 +29,8 @@ class EditMatchWindow(QWidget):
 
         self.match_date_lineedit = QLineEdit(conf.read_value("settings", "match_date"))
         self.match_date_lineedit.setReadOnly(True)
-        self.match_date_button = QPushButton("あ")
+        self.match_date_button = QPushButton("📅")
+        self.match_date_button.setFixedWidth(25)
         self.match_date_button.clicked.connect(self.match_date_button_clicked)
         grid_layout.addWidget(self.match_date_lineedit, 1, 1)
         grid_layout.addWidget(self.match_date_button, 1, 2)

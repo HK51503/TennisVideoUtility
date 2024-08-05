@@ -2,7 +2,8 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QFrame,
     QLabel, QFileDialog, QMenu
 )
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap, QPalette
+from PySide6.QtCore import Qt, QSize
 from window_edit_match import EditMatchWindow
 from window_edit_settings import EditSettingsWindow
 from window_progress import ProgressWindow
@@ -106,6 +107,7 @@ class MainWindow(QMainWindow):
         if ret == QMessageBox.No:
             event.ignore()
 
+
 class MatchListWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -171,10 +173,12 @@ class MatchListWidget(QWidget):
             if singles_or_doubles == "s":
                 match_id_full = match_id_hi + " " + player_name
                 setattr(self, label_name, QLabel(match_id_full))
+                getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             else:
                 match_id_full = match_id_hi + " " + player_name_1 + " " + player_name_2
                 setattr(self, label_name, QLabel(match_id_full))
+                getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
 
@@ -190,13 +194,32 @@ class MatchListWidget(QWidget):
             setattr(self, menu_name, QMenu())
             getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
             getattr(self, menu_name).addAction("選択をリセット", lambda m=match_id_low: self.remove_action_triggered(m))
-            setattr(self, menu_button_name, QPushButton("・"))
-            """ fix button
-            getattr(self, menu_button_name).setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            getattr(self, menu_button_name).setFixedSize(32, 32)
-            getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu.svg"))
-            getattr(self, menu_button_name).setFlat(True)
-            """
+            setattr(self, menu_button_name, QPushButton())
+            getattr(self, menu_button_name).setFixedSize(22, 22)
+            getattr(self, menu_button_name).setIconSize(QSize(14, 14))
+            if var.theme == "Dark":
+                getattr(self, menu_button_name).setStyleSheet("""QPushButton {
+                                                              border-radius : 11px;
+                                                              }
+                                                              QPushButton:hover:!pressed {
+                                                              background-color : #424242;}
+                                                              QPushButton:pressed {
+                                                              background-color : #3c3c3c;}
+                                                              QPushButton::menu-indicator{ width:0px; };
+                                                              """)
+                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-white.svg"))
+            elif var.theme == "Light":
+                getattr(self, menu_button_name).setStyleSheet("""QPushButton {
+                                                              border-radius : 11px;
+                                                              }
+                                                              QPushButton:hover:!pressed {
+                                                              background-color : #e6e6e6;}
+                                                              QPushButton:pressed {
+                                                              background-color : #c0c0c0;}
+                                                              QPushButton::menu-indicator{ width:0px; };
+                                                              """)
+                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-black.svg"))
+
             getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
 
