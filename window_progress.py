@@ -1,10 +1,8 @@
 from PySide6.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout
 from PySide6.QtCore import Qt, Signal
 import functions_settings_config as conf
-import rename_tool
-import ffmpeg_tool
-import os
-import logging
+import tool_rename, tool_ffmpeg
+import os, logging
 
 
 class QTextEditLogger(logging.Handler):
@@ -19,7 +17,8 @@ class QTextEditLogger(logging.Handler):
 
 
 class ProgressWindow(QWidget):
-    signal = Signal()
+    close_signal = Signal()
+    open_signal = Signal()
     parent_dir = os.getcwd()
 
     def __init__(self):
@@ -37,7 +36,6 @@ class ProgressWindow(QWidget):
         main_v_layout.addWidget(self.logger_text_edit.widget)
 
         self.setLayout(main_v_layout)
-        self.main_process()
 
 
     def main_process(self):
@@ -46,29 +44,33 @@ class ProgressWindow(QWidget):
         is_stitch_videos = conf.read_value("video_settings", "stitch_videos")
         is_keep_original = conf.read_value("video_settings", "keep_original")
         if is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "False":
+            logging.debug("Config is False False False")
             current_directory = os.getcwd()
-            match_directory_path = rename_tool.create_match_folder(current_directory)
-            rename_tool.rename_videos(match_directory_path)
+            match_directory_path = tool_rename.create_match_folder(current_directory)
+            tool_rename.rename_videos(match_directory_path)
         elif is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "True":
+            logging.debug("Config is False False True")
             current_directory = os.getcwd()
-            match_directory_path = rename_tool.create_match_folder(current_directory)
-            rename_tool.copy_videos(match_directory_path)
-            rename_tool.rename_videos(match_directory_path)
+            match_directory_path = tool_rename.create_match_folder(current_directory)
+            tool_rename.copy_videos(match_directory_path)
+            tool_rename.rename_videos(match_directory_path)
         elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "False":
+            logging.debug("Config is False True False")
             current_directory = os.getcwd()
-            match_directory_path = rename_tool.create_match_folder(current_directory)
+            match_directory_path = tool_rename.create_match_folder(current_directory)
             timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-            ffmpeg_tool.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
-            rename_tool.rename_stitched_videos(match_directory_path)
+            tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
+            tool_rename.rename_stitched_videos(match_directory_path)
         elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "True":
+            logging.debug("Config is False True True")
             current_directory = os.getcwd()
-            match_directory_path = rename_tool.create_match_folder(current_directory)
+            match_directory_path = tool_rename.create_match_folder(current_directory)
             timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-            ffmpeg_tool.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
-            rename_tool.rename_stitched_videos(match_directory_path)
+            tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
+            tool_rename.rename_stitched_videos(match_directory_path)
         else:
-            print("Not Supported")
+            logging.info("Configuration not supported")
         logging.info("Done")
 
     def closeEvent(self, event):
-        self.signal.emit()
+        self.close_signal.emit()

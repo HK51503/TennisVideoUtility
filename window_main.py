@@ -19,6 +19,8 @@ class MainWindow(QMainWindow):
         self.app = app
         self.edit_settings_window = EditSettingsWindow()
 
+        self.progress_window = ProgressWindow()
+
         self.setWindowTitle("Tennis Video Utility V1")
         self.resize(500, 400)
         main_window_central_widget = QWidget()
@@ -64,10 +66,10 @@ class MainWindow(QMainWindow):
         ret = confirmation_dialog.exec()
 
         if ret == QMessageBox.Yes:
-            var.university_name = conf.read_value("settings", "university")
-            self.progress_window = ProgressWindow()
+            var.university_name = conf.read_university()
             self.progress_window.show()
-            self.progress_window.signal.connect(self.render_match_list)
+            self.progress_window.main_process()
+            self.progress_window.close_signal.connect(self.render_match_list)
 
         # clear file list after finished renaming
         for match_id in var.dict_file_list:
@@ -173,12 +175,12 @@ class MatchListWidget(QWidget):
             if singles_or_doubles == "s":
                 match_id_full = match_id_hi + " " + player_name
                 setattr(self, label_name, QLabel(match_id_full))
-                getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
+                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             else:
                 match_id_full = match_id_hi + " " + player_name_1 + " " + player_name_2
                 setattr(self, label_name, QLabel(match_id_full))
-                getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
+                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
 

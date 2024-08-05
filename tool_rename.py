@@ -7,9 +7,9 @@ import shutil
 
 
 def create_match_folder(directory):
-    university_folder_name = str(conf.read_value("settings", "match_date") + " " + var.university_name)
+    university_folder_name = str(conf.read_value("settings", "match_date") + " " + conf.read_value("settings", "university"))
     university_folder_path = os.path.join(directory, university_folder_name)
-    logging.info("Checking if folder exists")
+    logging.info("Checking if folder: %s exists" % university_folder_name)
     if not (os.path.exists(university_folder_path)):
         os.mkdir(university_folder_path)
         logging.info("Creating folder: " + university_folder_name)
