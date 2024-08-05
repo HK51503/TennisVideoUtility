@@ -66,13 +66,13 @@ class MainWindow(QMainWindow):
             var.university_name = conf.read_value("settings", "university")
             self.progress_window = ProgressWindow()
             self.progress_window.show()
+            self.progress_window.signal.connect(self.render_match_list)
 
         # clear file list after finished renaming
         for match_id in var.dict_file_list:
             var.dict_file_list[match_id].clear()
         for match_id in var.dict_stitched_file:
             var.dict_stitched_file[match_id] = ""
-        self.progress_window.signal.connect(self.render_match_list)
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()
@@ -93,14 +93,18 @@ class MainWindow(QMainWindow):
         quit_dialog.setButtonText(QMessageBox.No, "いいえ")
 
         ret = quit_dialog.exec()
-
         if ret == QMessageBox.Yes:
             self.app.quit()
+        return ret
 
     def render_match_list(self):
         self.main_window_match_list.setWidget(MatchListWidget())
         self.main_window_match_list.setWidgetResizable(True)
 
+    def closeEvent(self, event):
+        ret = self.quit_button_clicked()
+        if ret == QMessageBox.No:
+            event.ignore()
 
 class MatchListWidget(QWidget):
     def __init__(self):
