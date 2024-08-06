@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as conf
 import tool_rename, tool_ffmpeg
 import os, logging
@@ -37,6 +37,26 @@ class ProgressWindow(QWidget):
 
         self.setLayout(main_v_layout)
 
+    def run_main_process(self):
+        self.thread = QThread()
+        self.worker = Worker()
+
+        self.worker.moveToThread(self.thread)
+
+        self.thread.started.connect(self.worker.main_process)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.worker.finished.connect(self.thread.deleteLater)
+
+        self.thread.start()
+
+    def closeEvent(self, event):
+        self.logger_text_edit.widget.clear()
+        self.close_signal.emit()
+
+
+class Worker(QObject):
+    finished = Signal()
 
     def main_process(self):
         logging.info("Main process started")
@@ -71,6 +91,4 @@ class ProgressWindow(QWidget):
         else:
             logging.info("Configuration not supported")
         logging.info("Done")
-
-    def closeEvent(self, event):
-        self.close_signal.emit()
+        self.finished.emit()

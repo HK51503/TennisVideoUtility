@@ -68,14 +68,8 @@ class MainWindow(QMainWindow):
         if ret == QMessageBox.Yes:
             var.university_name = conf.read_university()
             self.progress_window.show()
-            self.progress_window.main_process()
-            self.progress_window.close_signal.connect(self.render_match_list)
-
-        # clear file list after finished renaming
-        for match_id in var.dict_file_list:
-            var.dict_file_list[match_id].clear()
-        for match_id in var.dict_stitched_file:
-            var.dict_stitched_file[match_id] = ""
+            self.progress_window.run_main_process()
+            self.progress_window.close_signal.connect(self.process_finished)
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()
@@ -103,6 +97,14 @@ class MainWindow(QMainWindow):
     def render_match_list(self):
         self.main_window_match_list.setWidget(MatchListWidget())
         self.main_window_match_list.setWidgetResizable(True)
+
+    def process_finished(self):
+        # clear file list after finished renaming
+        for match_id in var.dict_file_list:
+            var.dict_file_list[match_id].clear()
+        var.dict_stitched_file = {}
+
+        self.render_match_list()
 
     def closeEvent(self, event):
         ret = self.quit_button_clicked()
