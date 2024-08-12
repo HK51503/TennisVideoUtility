@@ -99,6 +99,7 @@ class MainWindow(QMainWindow):
         self.main_window_match_list.setWidgetResizable(True)
 
     def process_finished(self):
+        self.progress_window.close()
         # clear file list after finished renaming
         for match_id in var.dict_file_list:
             var.dict_file_list[match_id].clear()
