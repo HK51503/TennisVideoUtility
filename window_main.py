@@ -2,7 +2,8 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QFrame,
     QLabel, QFileDialog, QMenu
 )
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap, QPalette
+from PySide6.QtCore import Qt, QSize
 from window_edit_match import EditMatchWindow
 from window_edit_settings import EditSettingsWindow
 from window_progress import ProgressWindow
@@ -17,6 +18,8 @@ class MainWindow(QMainWindow):
 
         self.app = app
         self.edit_settings_window = EditSettingsWindow()
+
+        self.progress_window = ProgressWindow()
 
         self.setWindowTitle("Tennis Video Utility V1")
         self.resize(500, 400)
@@ -63,16 +66,10 @@ class MainWindow(QMainWindow):
         ret = confirmation_dialog.exec()
 
         if ret == QMessageBox.Yes:
-            var.university_name = conf.read_value("settings", "university")
-            self.progress_window = ProgressWindow()
+            var.university_name = conf.read_university()
             self.progress_window.show()
-            self.progress_window.signal.connect(self.render_match_list)
-
-        # clear file list after finished renaming
-        for match_id in var.dict_file_list:
-            var.dict_file_list[match_id].clear()
-        for match_id in var.dict_stitched_file:
-            var.dict_stitched_file[match_id] = ""
+            self.progress_window.run_main_process()
+            self.progress_window.close_signal.connect(self.process_finished)
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()
@@ -101,10 +98,19 @@ class MainWindow(QMainWindow):
         self.main_window_match_list.setWidget(MatchListWidget())
         self.main_window_match_list.setWidgetResizable(True)
 
+    def process_finished(self):
+        # clear file list after finished renaming
+        for match_id in var.dict_file_list:
+            var.dict_file_list[match_id].clear()
+        var.dict_stitched_file = {}
+
+        self.render_match_list()
+
     def closeEvent(self, event):
         ret = self.quit_button_clicked()
         if ret == QMessageBox.No:
             event.ignore()
+
 
 class MatchListWidget(QWidget):
     def __init__(self):
@@ -171,10 +177,12 @@ class MatchListWidget(QWidget):
             if singles_or_doubles == "s":
                 match_id_full = match_id_hi + " " + player_name
                 setattr(self, label_name, QLabel(match_id_full))
+                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             else:
                 match_id_full = match_id_hi + " " + player_name_1 + " " + player_name_2
                 setattr(self, label_name, QLabel(match_id_full))
+                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
                 var.dict_match_id_full[match_id_low] = match_id_full
             getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
 
@@ -190,13 +198,32 @@ class MatchListWidget(QWidget):
             setattr(self, menu_name, QMenu())
             getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
             getattr(self, menu_name).addAction("選択をリセット", lambda m=match_id_low: self.remove_action_triggered(m))
-            setattr(self, menu_button_name, QPushButton("・"))
-            """ fix button
-            getattr(self, menu_button_name).setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            getattr(self, menu_button_name).setFixedSize(32, 32)
-            getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu.svg"))
-            getattr(self, menu_button_name).setFlat(True)
-            """
+            setattr(self, menu_button_name, QPushButton())
+            getattr(self, menu_button_name).setFixedSize(22, 22)
+            getattr(self, menu_button_name).setIconSize(QSize(14, 14))
+            if var.theme == "Dark":
+                getattr(self, menu_button_name).setStyleSheet("""QPushButton {
+                                                              border-radius : 11px;
+                                                              }
+                                                              QPushButton:hover:!pressed {
+                                                              background-color : #424242;}
+                                                              QPushButton:pressed {
+                                                              background-color : #3c3c3c;}
+                                                              QPushButton::menu-indicator{ width:0px; };
+                                                              """)
+                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-white.svg"))
+            elif var.theme == "Light":
+                getattr(self, menu_button_name).setStyleSheet("""QPushButton {
+                                                              border-radius : 11px;
+                                                              }
+                                                              QPushButton:hover:!pressed {
+                                                              background-color : #e6e6e6;}
+                                                              QPushButton:pressed {
+                                                              background-color : #c0c0c0;}
+                                                              QPushButton::menu-indicator{ width:0px; };
+                                                              """)
+                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-black.svg"))
+
             getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
 
