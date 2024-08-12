@@ -211,7 +211,7 @@ class MatchListWidget(QWidget):
                                                               background-color : #3c3c3c;}
                                                               QPushButton::menu-indicator{ width:0px; };
                                                               """)
-                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-white.svg"))
+                getattr(self, menu_button_name).setIcon(QIcon("resources/images/three-dots-menu-white.svg"))
             elif var.theme == "Light":
                 getattr(self, menu_button_name).setStyleSheet("""QPushButton {
                                                               border-radius : 11px;
@@ -222,7 +222,7 @@ class MatchListWidget(QWidget):
                                                               background-color : #c0c0c0;}
                                                               QPushButton::menu-indicator{ width:0px; };
                                                               """)
-                getattr(self, menu_button_name).setIcon(QIcon("images/three-dots-menu-black.svg"))
+                getattr(self, menu_button_name).setIcon(QIcon("resources/images/three-dots-menu-black.svg"))
 
             getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
