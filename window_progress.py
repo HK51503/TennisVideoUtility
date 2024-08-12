@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout, QPushButton, QMessageBox
+from PySide6.QtWidgets import QWidget, QPlainTextEdit, QPushButton, QMessageBox, QVBoxLayout, QSpacerItem, QSizePolicy
 from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as conf
 import tool_rename, tool_ffmpeg
@@ -38,7 +38,7 @@ class ProgressWindow(QWidget):
 
         main_v_layout = QVBoxLayout()
         main_v_layout.addWidget(self.logger_text_edit.widget)
-        main_v_layout.addWidget(self.close_button)
+        main_v_layout.addWidget(self.close_button, alignment=Qt.AlignRight)
 
         self.close_button.hide()
 
