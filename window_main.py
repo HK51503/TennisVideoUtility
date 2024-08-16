@@ -26,13 +26,13 @@ class MainWindow(QMainWindow):
         main_window_central_widget = QWidget()
         main_window_button_layout = QVBoxLayout()
 
-        start_button = QPushButton("開始")
+        start_button = QPushButton(self.tr("開始"))
         start_button.clicked.connect(self.start_button_clicked)
-        edit_match_button = QPushButton("試合を編集")
+        edit_match_button = QPushButton(self.tr("試合を編集"))
         edit_match_button.clicked.connect(self.edit_match_button_clicked)
-        edit_settings_button = QPushButton("設定")
+        edit_settings_button = QPushButton(self.tr("設定"))
         edit_settings_button.clicked.connect(self.edit_settings_button_clicked)
-        quit_button = QPushButton("終了")
+        quit_button = QPushButton(self.tr("終了"))
         quit_button.clicked.connect(self.quit_button_clicked)
 
         main_window_button_layout.addWidget(start_button)
@@ -57,11 +57,11 @@ class MainWindow(QMainWindow):
         confirmation_dialog = QMessageBox()
         confirmation_dialog.setWindowTitle("")
         confirmation_dialog.setIcon(QMessageBox.Information)
-        confirmation_dialog.setText("開始しますか？")
+        confirmation_dialog.setText(self.tr("開始しますか？"))
         confirmation_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         confirmation_dialog.setDefaultButton(QMessageBox.Yes)
-        confirmation_dialog.setButtonText(QMessageBox.Yes, "開始")
-        confirmation_dialog.setButtonText(QMessageBox.No, "戻る")
+        confirmation_dialog.setButtonText(QMessageBox.Yes, self.tr("開始"))
+        confirmation_dialog.setButtonText(QMessageBox.No, self.tr("戻る"))
 
         ret = confirmation_dialog.exec()
 
@@ -83,11 +83,11 @@ class MainWindow(QMainWindow):
         quit_dialog = QMessageBox()
         quit_dialog.setWindowTitle(" ")
         quit_dialog.setIcon(QMessageBox.Information)
-        quit_dialog.setText("アプリケーションを終了しますか？")
+        quit_dialog.setText(self.tr("アプリケーションを終了しますか？"))
         quit_dialog.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
         quit_dialog.setDefaultButton(QMessageBox.No)
-        quit_dialog.setButtonText(QMessageBox.Yes, "はい")
-        quit_dialog.setButtonText(QMessageBox.No, "いいえ")
+        quit_dialog.setButtonText(QMessageBox.Yes, self.tr("はい"))
+        quit_dialog.setButtonText(QMessageBox.No, self.tr("いいえ"))
 
         ret = quit_dialog.exec()
         if ret == QMessageBox.Yes:
@@ -119,7 +119,7 @@ class MatchListWidget(QWidget):
         self.match_list_v_layout = QVBoxLayout()
         self.match_list_dict = {}
 
-        self.add_message_label = QLabel("試合を追加してください")
+        self.add_message_label = QLabel(self.tr("試合を追加してください"))
         self.add_message_label.setStyleSheet("color:grey")
         self.match_list_v_layout.addWidget(self.add_message_label)
         if conf.if_match_exists() is False: self.add_message_label.show()
@@ -193,12 +193,12 @@ class MatchListWidget(QWidget):
             getattr(self, video_count_label_name).setStyleSheet("color:grey")
             getattr(self, match_h_layout_name).addWidget(getattr(self, video_count_label_name))
 
-            setattr(self, add_button_name, QPushButton("動画を選択"))
+            setattr(self, add_button_name, QPushButton(self.tr("動画を選択")))
             getattr(self, match_h_layout_name).addWidget(getattr(self, add_button_name))
 
             setattr(self, menu_name, QMenu())
-            getattr(self, menu_name).addAction("追加で選択", lambda m=match_id_low: self.add_button_clicked(m))
-            getattr(self, menu_name).addAction("選択をリセット", lambda m=match_id_low: self.remove_action_triggered(m))
+            getattr(self, menu_name).addAction(self.tr("追加で選択"), lambda m=match_id_low: self.add_button_clicked(m))
+            getattr(self, menu_name).addAction(self.tr("選択をリセット"), lambda m=match_id_low: self.remove_action_triggered(m))
             setattr(self, menu_button_name, QPushButton())
             getattr(self, menu_button_name).setFixedSize(22, 22)
             getattr(self, menu_button_name).setIconSize(QSize(14, 14))
@@ -231,7 +231,7 @@ class MatchListWidget(QWidget):
             if match_id_low in var.dict_file_list:
                 if var.dict_file_list[match_id_low]:
                     getattr(self, video_count_label_name).setText(str(
-                        len(var.dict_file_list[match_id_low])) + "本の動画を選択済み")
+                        len(var.dict_file_list[match_id_low])) + self.tr("本の動画を選択済み"))
                     getattr(self, video_count_label_name).setStyleSheet("color:grey")
                     getattr(self, video_count_label_name).show()
                     getattr(self, add_button_name).hide()
@@ -280,14 +280,14 @@ class MatchListWidget(QWidget):
         menu_button_name = "menu_button_" + match_id
         add_button_name = "add_button_" + match_id
         if len(var.dict_file_list[match_id]) != 0:
-            video_count_text = str(len(var.dict_file_list[match_id])) + "本の動画を選択済み"
+            video_count_text = str(len(var.dict_file_list[match_id])) + self.tr("本の動画を選択済み")
             getattr(self, video_count_label_name).setStyleSheet("color:grey")
             getattr(self, video_count_label_name).setText(video_count_text)
             getattr(self, video_count_label_name).show()
             getattr(self, menu_button_name).show()
             getattr(self, add_button_name).hide()
         else:
-            video_count_text = "動画を選択してください"
+            video_count_text = self.tr("動画を選択してください")
             getattr(self, video_count_label_name).setStyleSheet("color:red")
             getattr(self, video_count_label_name).setText(video_count_text)
             getattr(self, video_count_label_name).show()

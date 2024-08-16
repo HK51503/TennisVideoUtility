@@ -33,7 +33,7 @@ class ProgressWindow(QWidget):
         logging.getLogger().setLevel(logging.DEBUG)
         logging.info("Logger Initialized")
 
-        self.close_button = QPushButton("Close")
+        self.close_button = QPushButton(self.tr("閉じる"))
         self.close_button.clicked.connect(self.closeEvent)
 
         main_v_layout = QVBoxLayout()
@@ -72,7 +72,7 @@ class ProgressWindow(QWidget):
             quit_dialog = QMessageBox()
             quit_dialog.setWindowTitle(" ")
             quit_dialog.setIcon(QMessageBox.Information)
-            quit_dialog.setText("実行中ですが強制的に閉じますか？")
+            quit_dialog.setText(self.tr("実行中ですが強制的に閉じますか？"))
             quit_dialog.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
             quit_dialog.setDefaultButton(QMessageBox.No)
             quit_dialog.setButtonText(QMessageBox.Yes, "はい")

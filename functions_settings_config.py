@@ -29,9 +29,14 @@ def write_config(settings_config):
 
 if __name__ == "__main__":
     settings_config = ConfigParser()
-    read_config(settings_config)
+    """
     settings_config.add_section("video_settings")
-    write_config(settings_config)
     set_value("video_settings", "youtube_upload", "False")
     set_value("video_settings", "stitch_videos", "False")
     set_value("video_settings", "keep_original", "False")
+    """
+
+    read_config(settings_config)
+    settings_config.add_section("general_settings")
+    write_config(settings_config)
+    set_value("general_settings", "language", "ja")

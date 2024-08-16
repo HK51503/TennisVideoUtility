@@ -19,10 +19,10 @@ class EditMatchWindow(QWidget):
 
         grid_layout = QGridLayout()
 
-        grid_layout.addWidget(QLabel("大学名 : "), 0, 0)
-        grid_layout.addWidget(QLabel("日付 : "), 1, 0)
-        grid_layout.addWidget(QLabel("シングルスの本数 : "), 2, 0)
-        grid_layout.addWidget(QLabel("ダブルスの本数 : "), 3, 0)
+        grid_layout.addWidget(QLabel(self.tr("大学名 : ")), 0, 0)
+        grid_layout.addWidget(QLabel(self.tr("日付 : ")), 1, 0)
+        grid_layout.addWidget(QLabel(self.tr("シングルスの本数 : ")), 2, 0)
+        grid_layout.addWidget(QLabel(self.tr("ダブルスの本数 : ")), 3, 0)
 
         self.university_name_lineedit = QLineEdit(conf.read_university())
         grid_layout.addWidget(self.university_name_lineedit, 0, 1, 1, 2)
@@ -51,7 +51,7 @@ class EditMatchWindow(QWidget):
         self.warning_label.setStyleSheet("color: red;")
         grid_layout.addWidget(self.warning_label, 2, 3)
         apply_button = QPushButton()
-        apply_button.setText("本数を適用")
+        apply_button.setText(self.tr("本数を適用"))
         apply_button.clicked.connect(self.apply_button_clicked)
         grid_layout.addWidget(apply_button, 3, 3)
 
@@ -103,7 +103,7 @@ class EditMatchWindow(QWidget):
             self.render_players()
 
         else:
-            self.warning_label.setText("有効な数字を入力してください")
+            self.warning_label.setText(self.tr("有効な数字を入力してください"))
 
         self.update()
 

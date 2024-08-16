@@ -1,6 +1,7 @@
-from PySide6.QtWidgets import QApplication
+from PySide6 import QtWidgets, QtCore
 from window_main import MainWindow
 import functions_match_config as conf
+import functions_settings_config as settings
 import variables as var
 import argparse, sys, darkdetect
 
@@ -14,7 +15,13 @@ conf.initialize()
 
 var.theme = darkdetect.theme()
 
-app = QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
+
+qm_file = "./resources/translation-bin/en_US.qm"
+if settings.read_value("general_settings", "language") == "en":
+    translator = QtCore.QTranslator(app)
+    if translator.load(QtCore.QLocale.English, qm_file):
+        QtCore.QCoreApplication.installTranslator(translator)
 
 window = MainWindow(app)
 window.show()
