@@ -30,7 +30,7 @@ class ProgressWindow(QWidget):
         self.logger_text_edit = QTextEditLogger(self)
         self.logger_text_edit.setFormatter(logging.Formatter('[%(asctime)s %(levelname)s]: %(message)s'))
         logging.getLogger().addHandler(self.logger_text_edit)
-        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger().setLevel(logging.INFO)
         logging.info("Logger Initialized")
 
         self.close_button = QPushButton(self.tr("閉じる"))

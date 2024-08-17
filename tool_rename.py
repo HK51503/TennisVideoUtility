@@ -35,10 +35,12 @@ def copy_videos(destination_directory_path):
 
 def rename_videos(destination_directory_path):
     for match_id in var.dict_file_list:
+        final_directory_path = os.path.join(destination_directory_path, var.dict_match_id_full[match_id])
+        os.mkdir(final_directory_path)
         for index, original_file_path in enumerate(var.dict_file_list[match_id]):
             fn, file_extension = os.path.splitext(original_file_path)
             destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + " " + str(index + 1) + file_extension
-            rename_file(destination_file_name, original_file_path, destination_directory_path)
+            rename_file(destination_file_name, original_file_path, final_directory_path)
             logging.info("Finished renaming file:" + os.path.basename(original_file_path))
 
 
