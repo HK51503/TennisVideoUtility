@@ -1,3 +1,4 @@
+@echo off
 if exist .venv\ (
   echo Virtual environment already exists, skipping
   echo Activating virtual environment
