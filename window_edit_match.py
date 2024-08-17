@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QLabel, QLineEdit, QGridLayout, QCalendarWidget
 )
 from PySide6.QtCore import Qt, QDate
-from PySide6.QtGui import QValidator
 import functions_match_config as conf
 import variables as var
 

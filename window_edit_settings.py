@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QTabWidget, QWidget, QRadioButton, QPushButton, QLabel, QGroupBox, QVBoxLayout, QGridLayout,
+    QTabWidget, QWidget, QRadioButton, QLabel, QGroupBox, QVBoxLayout, QGridLayout,
     QButtonGroup, QFrame, QComboBox, QSpacerItem, QSizePolicy
 )
 from PySide6.QtCore import Qt

@@ -1,0 +1,4 @@
+# required packages
+PySide6
+darkdetect
+ffmpeg-python

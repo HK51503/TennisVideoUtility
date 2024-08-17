@@ -1,9 +1,9 @@
-from PySide6.QtWidgets import QWidget, QPlainTextEdit, QPushButton, QMessageBox, QVBoxLayout, QSpacerItem, QSizePolicy
+from PySide6.QtWidgets import QWidget, QPlainTextEdit, QPushButton, QMessageBox, QVBoxLayout
 from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as conf
 import tool_rename, tool_ffmpeg
 import variables as var
-import os, logging, shutil, math
+import os, logging, shutil
 
 
 class QTextEditLogger(logging.Handler):
