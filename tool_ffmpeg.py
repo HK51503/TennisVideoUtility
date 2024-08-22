@@ -24,7 +24,7 @@ def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
             var.dict_stitched_file[match_id] = file_path
 
             # create txt file with timestamps
-            f = open(timestamp_file_path, "a")
+            f = open(timestamp_file_path, "a", encoding="utf-8")
             f.write(var.dict_match_id_full[match_id] + "\n")
             t = 0
             for index, file in enumerate(var.dict_file_list[match_id]):
