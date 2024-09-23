@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
         file_name, n = QFileDialog.getOpenFileName(self, caption=self.tr("試合を読み込み"), filter=self.tr("設定ファイル (*.ini)"))
         if file_name != "":
             var.match_config_file_name = file_name
+        conf.initialize()
         self.render_match_list()
 
     def edit_match_button_clicked(self):
