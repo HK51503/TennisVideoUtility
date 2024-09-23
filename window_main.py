@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QFrame,
-    QLabel, QFileDialog, QMenu
+    QLabel, QFileDialog, QMenu, QDialog
 )
 from PySide6.QtGui import QFont, QIcon, QPixmap, QPalette
 from PySide6.QtCore import Qt, QSize
@@ -28,6 +28,8 @@ class MainWindow(QMainWindow):
 
         start_button = QPushButton(self.tr("開始"))
         start_button.clicked.connect(self.start_button_clicked)
+        read_match_button = QPushButton(self.tr("試合を読込"))
+        read_match_button.clicked.connect(self.read_match_button_clicked)
         edit_match_button = QPushButton(self.tr("試合を編集"))
         edit_match_button.clicked.connect(self.edit_match_button_clicked)
         edit_settings_button = QPushButton(self.tr("設定"))
@@ -36,6 +38,7 @@ class MainWindow(QMainWindow):
         quit_button.clicked.connect(self.quit_button_clicked)
 
         main_window_button_layout.addWidget(start_button)
+        main_window_button_layout.addWidget(read_match_button)
         main_window_button_layout.addWidget(edit_match_button)
         main_window_button_layout.addWidget(edit_settings_button)
         main_window_button_layout.addWidget(quit_button)
@@ -70,6 +73,12 @@ class MainWindow(QMainWindow):
             self.progress_window.show()
             self.progress_window.run_main_process()
             self.progress_window.close_signal.connect(self.process_finished)
+
+    def read_match_button_clicked(self):
+        file_name, n = QFileDialog.getOpenFileName(self, caption=self.tr("試合を読み込み"), filter=self.tr("設定ファイル (*.ini)"))
+        if file_name != "":
+            var.match_config_file_name = file_name
+        self.render_match_list()
 
     def edit_match_button_clicked(self):
         self.edit_match_window = EditMatchWindow()
