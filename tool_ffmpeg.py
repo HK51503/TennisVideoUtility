@@ -17,7 +17,7 @@ def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
             file_path = os.path.join(destination_path, file_name)
             logging.info("Concatenating " + str(len(var.dict_file_list[match_id])) + " videos")
             ffmpeg.input("concat.txt", format="concat", safe="0").output(file_path, c="copy").run(overwrite_output=True)
-            logging.info("Done concatenating")
+            logging.info("Done")
 
             os.remove("concat.txt")
 

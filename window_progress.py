@@ -15,6 +15,7 @@ class QTextEditLogger(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         self.widget.appendPlainText(msg)
+        self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
 
 
 class ProgressWindow(QWidget):
@@ -127,7 +128,7 @@ class Worker(QObject):
                 tool_rename.rename_stitched_videos(match_directory_path)
         else:
             logging.info("Configuration not supported")
-        logging.info("Done")
+        logging.info("Everything done")
         self.finished.emit()
 
     def is_enough_disk_space(self, path):
@@ -136,14 +137,14 @@ class Worker(QObject):
             for file in var.dict_file_list[match_id]:
                 total_size += os.path.getsize(file)
         total, used, free = shutil.disk_usage(path)
-        disk_total_in_gib = round(total / 2 ** 30, 2)
+        disk_free_in_gib = round(free / 2 ** 30, 2)
         file_total_in_gib = round(total_size / 2 ** 30, 2)
         if free >= total_size:
             logging.info("Estimated total file size: " + str(file_total_in_gib) + "GiB")
-            logging.info("Free disk space: " + str(disk_total_in_gib) + "GiB")
+            logging.info("Free disk space: " + str(disk_free_in_gib) + "GiB")
             return True
         else:
             logging.info("Estimated total file size: " + str(file_total_in_gib) + "GiB")
-            logging.info("Free disk space: " + str(disk_total_in_gib) + "GiB")
+            logging.info("Free disk space: " + str(disk_free_in_gib) + "GiB")
             logging.info("Not enough disk space")
             return False
