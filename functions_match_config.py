@@ -1,4 +1,4 @@
-import datetime
+import datetime, ast
 from configparser import ConfigParser
 import variables as var
 
@@ -21,6 +21,17 @@ def initialize():
 
     else:
         var.match_date = read_value("settings", "match_date")
+        for i in range(int(read_number_of_singles())):
+            match_number = str(i+1)
+            match_id_hi = "S" + match_number
+            match_id = "s" + match_number
+            var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+        for i in range(int(read_number_of_doubles())):
+            match_number = str(i+1)
+            match_id_hi = "D" + match_number
+            match_id = "d" + match_number
+            var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+
 
 
 def add_section(section):
@@ -34,7 +45,6 @@ def set_value(section, option, value):
     match_config = ConfigParser()
     read_config(match_config)
     match_config.set(section, option, value)
-
     write_config(match_config)
 
 

@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QMessageBox, QFrame,
-    QLabel, QFileDialog, QMenu, QDialog
+    QLabel, QFileDialog, QMenu
 )
-from PySide6.QtGui import QFont, QIcon, QPixmap, QPalette
+from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt, QSize
 from window_edit_match import EditMatchWindow
 from window_edit_settings import EditSettingsWindow
@@ -50,8 +50,22 @@ class MainWindow(QMainWindow):
         self.main_window_match_list.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.render_match_list()
 
+        save_selection_button = QPushButton(self.tr("動画の選択を保存"))
+        save_selection_button.clicked.connect(self.save_selection_button_clicked)
+        clear_selection_button = QPushButton(self.tr("動画の選択をリセット"))
+        clear_selection_button.clicked.connect(self.clear_selection_button_clicked)
+
+        match_layout_clear_selection_button_layout = QHBoxLayout()
+        match_layout_clear_selection_button_layout.addStretch()
+        match_layout_clear_selection_button_layout.addWidget(save_selection_button)
+        match_layout_clear_selection_button_layout.addWidget(clear_selection_button)
+
+        main_window_match_layout = QVBoxLayout()
+        main_window_match_layout.addWidget(self.main_window_match_list)
+        main_window_match_layout.addLayout(match_layout_clear_selection_button_layout)
+
         h_layout = QHBoxLayout()
-        h_layout.addWidget(self.main_window_match_list)
+        h_layout.addLayout(main_window_match_layout)
         h_layout.addLayout(main_window_button_layout)
         main_window_central_widget.setLayout(h_layout)
         self.setCentralWidget(main_window_central_widget)
@@ -110,12 +124,30 @@ class MainWindow(QMainWindow):
 
     def process_finished(self):
         self.progress_window.close()
-        # clear file list after finished renaming
-        for match_id in var.dict_file_list:
-            var.dict_file_list[match_id].clear()
-        var.dict_stitched_file = {}
 
-        self.render_match_list()
+    def clear_selection_button_clicked(self):
+        clear_dialog = QMessageBox()
+        clear_dialog.setWindowTitle(" ")
+        clear_dialog.setIcon(QMessageBox.Information)
+        clear_dialog.setText(self.tr("本当にリセットしますか？"))
+        clear_dialog.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
+        clear_dialog.setDefaultButton(QMessageBox.No)
+        clear_dialog.setButtonText(QMessageBox.Yes, self.tr("はい"))
+        clear_dialog.setButtonText(QMessageBox.No, self.tr("いいえ"))
+
+        ret = clear_dialog.exec()
+        if ret == QMessageBox.Yes:
+            for match_id in var.dict_file_list:
+                var.dict_file_list[match_id].clear()
+            var.dict_stitched_file = {}
+
+            self.render_match_list()
+
+    def save_selection_button_clicked(self):
+        for match_id in var.dict_file_list:
+            print(var.dict_file_list[match_id])
+            match_id_hi = match_id.upper()
+            conf.set_value(match_id_hi, "files", str(var.dict_file_list[match_id]))
 
     def closeEvent(self, event):
         ret = self.quit_button_clicked()

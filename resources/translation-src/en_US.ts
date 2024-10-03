@@ -64,7 +64,7 @@
     <name>MainWindow</name>
     <message>
         <location filename="../../window_main.py" line="29"/>
-        <location filename="../../window_main.py" line="66"/>
+        <location filename="../../window_main.py" line="80"/>
         <source>開始</source>
         <translation>Start</translation>
     </message>
@@ -89,71 +89,88 @@
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="63"/>
+        <location filename="../../window_main.py" line="53"/>
+        <source>動画の選択を保存</source>
+        <translation>Save video selection</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="55"/>
+        <source>動画の選択をリセット</source>
+        <translation>Reset video selection</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="77"/>
         <source>開始しますか？</source>
         <translation>Confirm start?</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="67"/>
+        <location filename="../../window_main.py" line="81"/>
         <source>戻る</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="78"/>
+        <location filename="../../window_main.py" line="92"/>
         <source>試合を読み込み</source>
         <translation>Open a file</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="78"/>
+        <location filename="../../window_main.py" line="92"/>
         <source>設定ファイル (*.ini)</source>
         <translation>Configuration file (*.ini)</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="96"/>
+        <location filename="../../window_main.py" line="110"/>
         <source>アプリケーションを終了しますか？</source>
         <translation>Quit application?</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="99"/>
+        <location filename="../../window_main.py" line="113"/>
+        <location filename="../../window_main.py" line="135"/>
         <source>はい</source>
         <translation>Yes</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="100"/>
+        <location filename="../../window_main.py" line="114"/>
+        <location filename="../../window_main.py" line="136"/>
         <source>いいえ</source>
         <translation>No</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="132"/>
+        <source>本当にリセットしますか？</source>
+        <translation>Are you sure?</translation>
     </message>
 </context>
 <context>
     <name>MatchListWidget</name>
     <message>
-        <location filename="../../window_main.py" line="132"/>
+        <location filename="../../window_main.py" line="164"/>
         <source>試合を追加してください</source>
         <translation>Please add a match</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="206"/>
+        <location filename="../../window_main.py" line="238"/>
         <source>動画を選択</source>
         <translation>Select Videos</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="210"/>
+        <location filename="../../window_main.py" line="242"/>
         <source>追加で選択</source>
         <translation>Select More</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="211"/>
+        <location filename="../../window_main.py" line="243"/>
         <source>選択をリセット</source>
         <translation>Reset Selection</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="244"/>
-        <location filename="../../window_main.py" line="294"/>
+        <location filename="../../window_main.py" line="276"/>
+        <location filename="../../window_main.py" line="326"/>
         <source>本の動画を選択済み</source>
         <translation> videos selected</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="301"/>
+        <location filename="../../window_main.py" line="333"/>
         <source>動画を選択してください</source>
         <translation>Video not selected</translation>
     </message>
