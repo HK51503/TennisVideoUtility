@@ -4,32 +4,32 @@
 <context>
     <name>EditMatchWindow</name>
     <message>
-        <location filename="../../window_edit_match.py" line="22"/>
+        <location filename="../../window_edit_match.py" line="21"/>
         <source>大学名 : </source>
         <translation>University : </translation>
     </message>
     <message>
-        <location filename="../../window_edit_match.py" line="23"/>
+        <location filename="../../window_edit_match.py" line="22"/>
         <source>日付 : </source>
         <translation>Date : </translation>
     </message>
     <message>
-        <location filename="../../window_edit_match.py" line="24"/>
+        <location filename="../../window_edit_match.py" line="23"/>
         <source>シングルスの本数 : </source>
         <translation>Number of Singles : </translation>
     </message>
     <message>
-        <location filename="../../window_edit_match.py" line="25"/>
+        <location filename="../../window_edit_match.py" line="24"/>
         <source>ダブルスの本数 : </source>
         <translation>Number of Doubles : </translation>
     </message>
     <message>
-        <location filename="../../window_edit_match.py" line="54"/>
+        <location filename="../../window_edit_match.py" line="53"/>
         <source>本数を適用</source>
         <translation>Apply</translation>
     </message>
     <message>
-        <location filename="../../window_edit_match.py" line="106"/>
+        <location filename="../../window_edit_match.py" line="105"/>
         <source>有効な数字を入力してください</source>
         <translation>Please enter a valid number</translation>
     </message>
@@ -64,47 +64,62 @@
     <name>MainWindow</name>
     <message>
         <location filename="../../window_main.py" line="29"/>
-        <location filename="../../window_main.py" line="63"/>
+        <location filename="../../window_main.py" line="66"/>
         <source>開始</source>
         <translation>Start</translation>
     </message>
     <message>
         <location filename="../../window_main.py" line="31"/>
+        <source>試合を読込</source>
+        <translation>Import a Match</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="33"/>
         <source>試合を編集</source>
         <translation>Edit Matches</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="33"/>
+        <location filename="../../window_main.py" line="35"/>
         <source>設定</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="35"/>
+        <location filename="../../window_main.py" line="37"/>
         <source>終了</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="60"/>
+        <location filename="../../window_main.py" line="63"/>
         <source>開始しますか？</source>
         <translation>Confirm start?</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="64"/>
+        <location filename="../../window_main.py" line="67"/>
         <source>戻る</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="86"/>
+        <location filename="../../window_main.py" line="78"/>
+        <source>試合を読み込み</source>
+        <translation>Open a file</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="78"/>
+        <source>設定ファイル (*.ini)</source>
+        <translation>Configuration file (*.ini)</translation>
+    </message>
+    <message>
+        <location filename="../../window_main.py" line="96"/>
         <source>アプリケーションを終了しますか？</source>
         <translation>Quit application?</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="89"/>
+        <location filename="../../window_main.py" line="99"/>
         <source>はい</source>
         <translation>Yes</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="90"/>
+        <location filename="../../window_main.py" line="100"/>
         <source>いいえ</source>
         <translation>No</translation>
     </message>
@@ -112,33 +127,33 @@
 <context>
     <name>MatchListWidget</name>
     <message>
-        <location filename="../../window_main.py" line="122"/>
+        <location filename="../../window_main.py" line="132"/>
         <source>試合を追加してください</source>
         <translation>Please add a match</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="196"/>
+        <location filename="../../window_main.py" line="206"/>
         <source>動画を選択</source>
         <translation>Select Videos</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="200"/>
+        <location filename="../../window_main.py" line="210"/>
         <source>追加で選択</source>
         <translation>Select More</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="201"/>
+        <location filename="../../window_main.py" line="211"/>
         <source>選択をリセット</source>
         <translation>Reset Selection</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="234"/>
-        <location filename="../../window_main.py" line="284"/>
+        <location filename="../../window_main.py" line="244"/>
+        <location filename="../../window_main.py" line="294"/>
         <source>本の動画を選択済み</source>
         <translation> videos selected</translation>
     </message>
     <message>
-        <location filename="../../window_main.py" line="291"/>
+        <location filename="../../window_main.py" line="301"/>
         <source>動画を選択してください</source>
         <translation>Video not selected</translation>
     </message>
@@ -146,12 +161,12 @@
 <context>
     <name>ProgressWindow</name>
     <message>
-        <location filename="../../window_progress.py" line="36"/>
+        <location filename="../../window_progress.py" line="37"/>
         <source>閉じる</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../../window_progress.py" line="75"/>
+        <location filename="../../window_progress.py" line="76"/>
         <source>実行中ですが強制的に閉じますか？</source>
         <translation>Do you want to force quit ongoing processes?</translation>
     </message>

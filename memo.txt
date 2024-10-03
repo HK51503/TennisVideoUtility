@@ -1,0 +1,4 @@
+To update translation,
+pyside6-lupdate (python files with translations) -ts resources/translation-src/en_US.ts
+then,
+pyside6-linguist resources/translation-src/en_US.ts
