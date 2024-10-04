@@ -50,7 +50,8 @@ def rename_stitched_videos(destination_directory_path):
         destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + file_extension
         rename_file(destination_file_name, var.dict_stitched_file[match_id], destination_directory_path)
         logging.info("Finished renaming file:" + os.path.basename(var.dict_stitched_file[match_id]))
-
+        var.dict_youtube_upload[match_id].insert(0, destination_file_name)
+        var.dict_youtube_upload[match_id].append(os.path.join(destination_directory_path, destination_file_name))
 
 
 if __name__ == "__main__":

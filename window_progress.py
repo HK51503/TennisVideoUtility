@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QPlainTextEdit, QPushButton, QMessageBox, QVBoxLayout
 from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as conf
-import tool_rename, tool_ffmpeg
+import tool_rename, tool_ffmpeg, tool_youtube_upload
 import variables as var
 import os, logging, shutil
 
@@ -126,6 +126,15 @@ class Worker(QObject):
                 timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
                 tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
                 tool_rename.rename_stitched_videos(match_directory_path)
+        elif is_youtube_upload == "True" and is_stitch_videos == "True" and is_keep_original == "True":
+            logging.debug("Config is True True True")
+            if self.is_enough_disk_space(cwd) is True:
+                current_directory = cwd
+                match_directory_path = tool_rename.create_match_folder(current_directory)
+                timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
+                tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
+                tool_rename.rename_stitched_videos(match_directory_path)
+                tool_youtube_upload.upload_videos()
         else:
             logging.info("Configuration not supported")
         logging.info("Everything done")

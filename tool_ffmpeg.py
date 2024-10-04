@@ -8,6 +8,9 @@ import logging
 def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
     for match_id in var.dict_file_list:
         if len(var.dict_file_list[match_id]) != 0:
+            # initialize var.dict_youtube_upload
+            var.dict_youtube_upload[match_id] = []
+
             # stitch videos
             f = open("concat.txt", "w", encoding="utf-8")
             f.writelines([('''file '%s'\n''' % input_path) for input_path in var.dict_file_list[match_id]])
@@ -27,11 +30,14 @@ def stitch_videos(destination_path, timestamp_file_path, is_keep_original):
             f = open(timestamp_file_path, "a", encoding="utf-8")
             f.write(var.dict_match_id_full[match_id] + "\n")
             t = 0
+            description = ""
             for index, file in enumerate(var.dict_file_list[match_id]):
                 time = int(t)
                 f.write(str(datetime.timedelta(seconds=time)) + " " + str(index+1) + "\n")
+                description += (str(datetime.timedelta(seconds=time)) + " " + str(index+1) + "\n")
                 duration = get_video_duration(file)
                 t += duration
+            var.dict_youtube_upload[match_id].append(description)
             f.write("\n")
             f.close()
 

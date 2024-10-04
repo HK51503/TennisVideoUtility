@@ -4,4 +4,5 @@ dict_file_list = {}
 dict_match_id_full = {}
 university_name = ""
 dict_stitched_file = {}
+dict_youtube_upload = {}
 theme = ""
