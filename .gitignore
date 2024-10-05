@@ -18,3 +18,5 @@ main.onefile-build/
 .DS_Store
 test/
 2024-07-27 サンプル大学/
+client_secrets.json
+oauth2.json
