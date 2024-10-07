@@ -25,12 +25,14 @@ def initialize():
             match_number = str(i+1)
             match_id_hi = "S" + match_number
             match_id = "s" + match_number
-            var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+            try: var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+            except: print("エラーが発生しました")
         for i in range(int(read_number_of_doubles())):
             match_number = str(i+1)
             match_id_hi = "D" + match_number
             match_id = "d" + match_number
-            var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+            try: var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
+            except: print("エラーが発生しました")
 
 
 
