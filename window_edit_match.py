@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QDate
 import functions_match_config as conf
 import variables as var
+from class_match import Match
 
 
 class EditMatchWindow(QWidget):
@@ -91,6 +92,28 @@ class EditMatchWindow(QWidget):
         if validation is True:
             # remove warning label text if it exists
             self.warning_label.setText("")
+
+            # create match object
+            singles_differential = int(self.number_of_singles_lineedit.text())-int(conf.read_number_of_singles())
+            doubles_differential = int(self.number_of_doubles_lineedit.text())-int(conf.read_number_of_doubles())
+            if singles_differential > 0:
+                for i in range(int(conf.read_number_of_singles()), int(self.number_of_singles_lineedit.text())):
+                    match_id = "s" + str(i+1)
+                    var.dict_matches[match_id] = Match(match_id)
+            elif singles_differential < 0:
+                for i in range(int(self.number_of_singles_lineedit.text()), int(conf.read_number_of_singles())):
+                    match_id = "s" + str(i+1)
+                    del var.dict_matches[match_id]
+
+            if doubles_differential > 0:
+                for i in range(int(conf.read_number_of_doubles()), int(self.number_of_doubles_lineedit.text())):
+                    match_id = "d" + str(i+1)
+                    var.dict_matches[match_id] = Match(match_id)
+            elif doubles_differential < 0:
+                for i in range(int(self.number_of_doubles_lineedit.text()), int(conf.read_number_of_doubles())):
+                    match_id = "d" + str(i+1)
+                    del var.dict_matches[match_id]
+
             # save to match config
             self.save_match_config()
 
