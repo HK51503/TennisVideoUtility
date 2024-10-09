@@ -142,8 +142,8 @@ class Worker(QObject):
 
     def is_enough_disk_space(self, path):
         total_size = 0
-        for match_id in var.dict_file_list:
-            for file in var.dict_file_list[match_id]:
+        for match_id in var.dict_matches:
+            for file in var.dict_matches[match_id].file_list:
                 total_size += os.path.getsize(file)
         total, used, free = shutil.disk_usage(path)
         disk_free_in_gib = round(free / 2 ** 30, 2)

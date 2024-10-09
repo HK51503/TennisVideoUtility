@@ -182,11 +182,11 @@ def upload(file_path, title, description, privacy_status):
 
 
 def upload_videos():
-    for match_id in var.dict_youtube_upload:
+    for match_id in var.dict_matches:
         logging.info("Preparing to upload %s" % match_id)
-        file_path = var.dict_youtube_upload[match_id][2]
-        title = var.dict_youtube_upload[match_id][0]
-        description = var.dict_youtube_upload[match_id][1]
+        file_path = var.dict_matches[match_id].youtube_upload_file_path
+        title = var.dict_matches[match_id].youtube_upload_title
+        description = var.dict_matches[match_id].youtube_upload_description
         upload(file_path, title, description, "unlisted")
 
 

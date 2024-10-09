@@ -24,34 +24,35 @@ def rename_file(destination_file_name, original_file_path, destination_directory
 
 
 def copy_videos(destination_directory_path):
-    for match_id in var.dict_file_list:
-        for index, original_file_path in enumerate(var.dict_file_list[match_id]):
+    for match_id in var.dict_matches:
+        for index, original_file_path in enumerate(var.dict_matches[match_id].file_list):
             file_name = os.path.basename(original_file_path)
             logging.info("Copying file: " + file_name)
             shutil.copy2(original_file_path, destination_directory_path)
             logging.info("Finished copying: " + file_name)
-            var.dict_file_list[match_id][index] = os.path.join(destination_directory_path, file_name)
+            var.dict_matches[match_id].file_list[index] = os.path.join(destination_directory_path, file_name)
 
 
 def rename_videos(destination_directory_path):
-    for match_id in var.dict_file_list:
-        final_directory_path = os.path.join(destination_directory_path, var.dict_match_id_full[match_id])
+    for match_id in var.dict_matches:
+        final_directory_path = os.path.join(destination_directory_path, var.dict_matches[match_id].match_id_full)
         os.mkdir(final_directory_path)
-        for index, original_file_path in enumerate(var.dict_file_list[match_id]):
+        for index, original_file_path in enumerate(var.dict_matches[match_id].file_list):
             fn, file_extension = os.path.splitext(original_file_path)
-            destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + " " + str(index + 1) + file_extension
+            destination_file_name = var.university_name + " " + var.dict_matches[match_id].match_id_full + " " + str(index + 1) + file_extension
             rename_file(destination_file_name, original_file_path, final_directory_path)
             logging.info("Finished renaming file:" + os.path.basename(original_file_path))
 
 
 def rename_stitched_videos(destination_directory_path):
-    for match_id in var.dict_stitched_file:
-        fn, file_extension = os.path.splitext(var.dict_stitched_file[match_id])
-        destination_file_name = var.university_name + " " + var.dict_match_id_full[match_id] + file_extension
-        rename_file(destination_file_name, var.dict_stitched_file[match_id], destination_directory_path)
-        logging.info("Finished renaming file:" + os.path.basename(var.dict_stitched_file[match_id]))
-        var.dict_youtube_upload[match_id].insert(0, destination_file_name)
-        var.dict_youtube_upload[match_id].append(os.path.join(destination_directory_path, destination_file_name))
+    for match_id in var.dict_matches:
+        if var.dict_matches[match_id].is_file_selected:
+            fn, file_extension = os.path.splitext(var.dict_matches[match_id].stitched_file)
+            destination_file_name = var.university_name + " " + var.dict_matches[match_id].match_id_full + file_extension
+            rename_file(destination_file_name, var.dict_matches[match_id].stitched_file, destination_directory_path)
+            logging.info("Finished renaming file:" + os.path.basename(var.dict_matches[match_id].stitched_file))
+            var.dict_matches[match_id].youtube_upload_title = destination_file_name
+            var.dict_matches[match_id].youtube_upload_file_path = os.path.join(destination_directory_path, destination_file_name)
 
 
 if __name__ == "__main__":
@@ -81,7 +82,7 @@ if __name__ == "__main__":
             os.mkdir(match_folder_path)
 
         match_id_low_list.append(match_id_low)
-        var.dict_match_id_full[match_id_low] = match_id_full
+        var.dict_matches[match_id_low].match_id_full = match_id_full
 
     # シングルスフォルダ作成
     for i in range(num_singles):
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             os.mkdir(match_folder_path)
 
         match_id_low_list.append(match_id_low)
-        var.dict_match_id_full[match_id_low] = match_id_full
+        var.dict_matches[match_id_low].match_id_full = match_id_full
 
     # 作成したフォルダをエクスプローラーで開く
     open_explorer = 'explorer.exe ' + '/root,"' + parent_dir + '"'
@@ -108,14 +109,14 @@ if __name__ == "__main__":
     # 動画のファイル名変更および親ディレクトリへの動画の転送
     for i in range(num_singles + num_doubles):
         match_id_low = match_id_low_list[i]
-        match_id_full = var.dict_match_id_full[match_id_low]
+        match_id_full = var.dict_matches[match_id_low].match_id_full
         path = os.path.join(parent_dir, match_id_full)
         cur_file_list = os.listdir(path)
         cur_file_list_full = []
         for file in cur_file_list:
             cur_file_list_full.append(os.path.join(path, file))
 
-        var.dict_file_list[match_id_low] = cur_file_list_full
+        var.dict_matches[match_id_low].file_list = cur_file_list_full
 
     rename_videos(parent_dir)
 

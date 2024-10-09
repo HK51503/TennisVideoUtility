@@ -28,8 +28,8 @@ class MainWindow(QMainWindow):
 
         start_button = QPushButton(self.tr("開始"))
         start_button.clicked.connect(self.start_button_clicked)
-        read_match_button = QPushButton(self.tr("試合を読込"))
-        read_match_button.clicked.connect(self.read_match_button_clicked)
+        import_match_button = QPushButton(self.tr("試合を読込"))
+        import_match_button.clicked.connect(self.import_match_button_clicked)
         edit_match_button = QPushButton(self.tr("試合を編集"))
         edit_match_button.clicked.connect(self.edit_match_button_clicked)
         edit_settings_button = QPushButton(self.tr("設定"))
@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         quit_button.clicked.connect(self.quit_button_clicked)
 
         main_window_button_layout.addWidget(start_button)
-        main_window_button_layout.addWidget(read_match_button)
+        main_window_button_layout.addWidget(import_match_button)
         main_window_button_layout.addWidget(edit_match_button)
         main_window_button_layout.addWidget(edit_settings_button)
         main_window_button_layout.addWidget(quit_button)
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
             self.progress_window.run_main_process()
             self.progress_window.close_signal.connect(self.process_finished)
 
-    def read_match_button_clicked(self):
+    def import_match_button_clicked(self):
         file_name, n = QFileDialog.getOpenFileName(self, caption=self.tr("試合を読み込み"), filter=self.tr("設定ファイル (*.ini)"))
         if file_name != "":
             var.match_config_file_name = file_name
@@ -137,17 +137,16 @@ class MainWindow(QMainWindow):
 
         ret = clear_dialog.exec()
         if ret == QMessageBox.Yes:
-            for match_id in var.dict_file_list:
-                var.dict_file_list[match_id].clear()
-            var.dict_stitched_file = {}
+            for match_id in var.dict_matches:
+                var.dict_matches[match_id].clear_file_selection()
 
             self.render_match_list()
 
-    def save_selection_button_clicked(self):
-        for match_id in var.dict_file_list:
-            print(var.dict_file_list[match_id])
+    @staticmethod
+    def save_selection_button_clicked():
+        for match_id in var.dict_matches:
             match_id_hi = match_id.upper()
-            conf.set_value(match_id_hi, "files", str(var.dict_file_list[match_id]))
+            conf.set_value(match_id_hi, "files", str(var.dict_matches[match_id].file_list))
 
     def closeEvent(self, event):
         ret = self.quit_button_clicked()
@@ -159,7 +158,7 @@ class MatchListWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.match_list_v_layout = QVBoxLayout()
-        self.match_list_dict = {}
+        self.match_list_add_button_dict = {}
 
         self.add_message_label = QLabel(self.tr("試合を追加してください"))
         self.add_message_label.setStyleSheet("color:grey")
@@ -170,42 +169,26 @@ class MatchListWidget(QWidget):
         # create id list
         match_id_low_list = []
         match_id_hi_list = []
-        for i in range(int(conf.read_number_of_singles())):
-            match_id_low = "s" + str(i + 1)
-            match_id_hi = "S" + str(i + 1)
-
-            match_id_low_list.append(match_id_low)
-            match_id_hi_list.append(match_id_hi)
-
-        for i in range(int(conf.read_number_of_doubles())):
-            match_id_low = "d" + str(i + 1)
-            match_id_hi = "D" + str(i + 1)
-
-            match_id_low_list.append(match_id_low)
-            match_id_hi_list.append(match_id_hi)
+        for match_id in var.dict_matches:
+            match_id_low_list.append(match_id)
+            match_id_hi_list.append(var.dict_matches[match_id].match_id_high)
+        match_id_low_list.sort()
+        match_id_hi_list.sort()
 
         # initialize match list
         for i in range(len(match_id_low_list)):
             # define variables
             match_id_low = match_id_low_list[i]
-            match_id_hi = match_id_hi_list[i]
-            singles_or_doubles = match_id_low[0]
             match_frame_name = "match_frame_" + match_id_low
             match_h_layout_name = "match_h_layout_" + match_id_low
-            player_name = ""
-            player_name_1 = ""
-            player_name_2 = ""
-            if singles_or_doubles == "s":
-                player_name = conf.read_value(match_id_hi, "p")
-            else:
-                player_name_1 = conf.read_value(match_id_hi, "p1")
-                player_name_2 = conf.read_value(match_id_hi, "p2")
             label_name = "label_" + match_id_low
             add_button_name = "add_button_" + match_id_low
 
             menu_button_name = "menu_button_" + match_id_low
             menu_name = "menu_" + match_id_low
             video_count_label_name = "video_count_label_button_" + match_id_low
+
+            match_id_full = var.dict_matches[match_id_low].get_match_id_full()
 
             # create match frame and h layout
             setattr(self, match_frame_name, QFrame())
@@ -216,17 +199,9 @@ class MatchListWidget(QWidget):
             setattr(self, match_h_layout_name, QHBoxLayout())
 
             # add content to h layout
-            # add match id to dictionary
-            if singles_or_doubles == "s":
-                match_id_full = match_id_hi + " " + player_name
-                setattr(self, label_name, QLabel(match_id_full))
-                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
-                var.dict_match_id_full[match_id_low] = match_id_full
-            else:
-                match_id_full = match_id_hi + " " + player_name_1 + " " + player_name_2
-                setattr(self, label_name, QLabel(match_id_full))
-                # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
-                var.dict_match_id_full[match_id_low] = match_id_full
+            setattr(self, label_name, QLabel(match_id_full))
+            # getattr(self, label_name).setStyleSheet('.QLabel { font-size: 14pt;}')
+
             getattr(self, match_h_layout_name).addWidget(getattr(self, label_name))
 
             getattr(self, match_h_layout_name).addStretch()
@@ -270,21 +245,14 @@ class MatchListWidget(QWidget):
             getattr(self, menu_button_name).setMenu(getattr(self, menu_name))
             getattr(self, match_h_layout_name).addWidget(getattr(self, menu_button_name))
 
-            if match_id_low in var.dict_file_list:
-                if var.dict_file_list[match_id_low]:
-                    getattr(self, video_count_label_name).setText(str(
-                        len(var.dict_file_list[match_id_low])) + self.tr("本の動画を選択済み"))
-                    getattr(self, video_count_label_name).setStyleSheet("color:grey")
-                    getattr(self, video_count_label_name).show()
-                    getattr(self, add_button_name).hide()
-                    getattr(self, menu_button_name).show()
-                else:
-                    getattr(self, video_count_label_name).hide()
-                    getattr(self, add_button_name).show()
-                    getattr(self, menu_button_name).hide()
-
+            if len(var.dict_matches[match_id_low].file_list) != 0:
+                getattr(self, video_count_label_name).setText(str(
+                    len(var.dict_matches[match_id_low].file_list)) + self.tr("本の動画を選択済み"))
+                getattr(self, video_count_label_name).setStyleSheet("color:grey")
+                getattr(self, video_count_label_name).show()
+                getattr(self, add_button_name).hide()
+                getattr(self, menu_button_name).show()
             else:
-                var.dict_file_list[match_id_low] = []
                 getattr(self, video_count_label_name).hide()
                 getattr(self, add_button_name).show()
                 getattr(self, menu_button_name).hide()
@@ -295,10 +263,10 @@ class MatchListWidget(QWidget):
             self.match_list_v_layout.addWidget(getattr(self, match_frame_name))
 
             # push button signal
-            self.match_list_dict.update({match_id_low: getattr(self, add_button_name)})
+            self.match_list_add_button_dict.update({match_id_low: getattr(self, add_button_name)})
 
-        for button in self.match_list_dict:
-            self.match_list_dict[button].clicked.connect(lambda _, b=button: self.add_button_clicked(b))
+        for button in self.match_list_add_button_dict:
+            self.match_list_add_button_dict[button].clicked.connect(lambda _, b=button: self.add_button_clicked(b))
 
         self.match_list_v_layout.addStretch()
         self.setLayout(self.match_list_v_layout)
@@ -311,18 +279,18 @@ class MatchListWidget(QWidget):
 
         # save selected files to list
         for file in file_dialog.selectedFiles():
-            if file not in var.dict_file_list[match_id]:
-                var.dict_file_list[match_id].append(file)
+            if file not in var.dict_matches[match_id].file_list:
+                var.dict_matches[match_id].file_list.append(file)
 
         # sort files by creation date
-        var.dict_file_list[match_id].sort(key=lambda x: os.path.getmtime(x))
+        var.dict_matches[match_id].file_list.sort(key=lambda x: os.path.getmtime(x))
 
         # change ui
         video_count_label_name = "video_count_label_button_" + match_id
         menu_button_name = "menu_button_" + match_id
         add_button_name = "add_button_" + match_id
-        if len(var.dict_file_list[match_id]) != 0:
-            video_count_text = str(len(var.dict_file_list[match_id])) + self.tr("本の動画を選択済み")
+        if len(var.dict_matches[match_id].file_list) != 0:
+            video_count_text = str(len(var.dict_matches[match_id].file_list)) + self.tr("本の動画を選択済み")
             getattr(self, video_count_label_name).setStyleSheet("color:grey")
             getattr(self, video_count_label_name).setText(video_count_text)
             getattr(self, video_count_label_name).show()
@@ -338,7 +306,7 @@ class MatchListWidget(QWidget):
 
     def remove_action_triggered(self, match_id):
         # clear list
-        var.dict_file_list[match_id].clear()
+        var.dict_matches[match_id].file_list.clear()
 
         # update ui
         label_name = "video_count_label_button_" + match_id

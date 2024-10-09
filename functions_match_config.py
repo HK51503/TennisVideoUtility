@@ -1,6 +1,7 @@
 import datetime, ast
 from configparser import ConfigParser
 import variables as var
+from class_match import SinglesMatch, DoublesMatch
 
 var.match_config_file_name = ""
 
@@ -22,18 +23,19 @@ def initialize():
     else:
         var.match_date = read_value("settings", "match_date")
         for i in range(int(read_number_of_singles())):
-            match_number = str(i+1)
-            match_id_hi = "S" + match_number
-            match_id = "s" + match_number
-            try: var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
-            except: print("エラーが発生しました")
+            match_id = "s" + str(i+1)
+            match_id_hi = match_id.upper()
+            var.dict_matches[match_id] = SinglesMatch(match_id)
+            var.dict_matches[match_id].set_player(read_value(match_id_hi, "p"))
+            try: var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
+            except: pass
         for i in range(int(read_number_of_doubles())):
-            match_number = str(i+1)
-            match_id_hi = "D" + match_number
-            match_id = "d" + match_number
-            try: var.dict_file_list[match_id] = ast.literal_eval(read_value(match_id_hi, "files"))
-            except: print("エラーが発生しました")
-
+            match_id = "d" + str(i + 1)
+            match_id_hi = match_id.upper()
+            var.dict_matches[match_id] = DoublesMatch(match_id)
+            var.dict_matches[match_id].set_player(read_value(match_id_hi, "p1"), read_value(match_id_hi, "p2"))
+            try: var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
+            except: pass
 
 
 def add_section(section):

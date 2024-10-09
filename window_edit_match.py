@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QDate
 import functions_match_config as conf
 import variables as var
-from class_match import Match
+from class_match import SinglesMatch, DoublesMatch
 
 
 class EditMatchWindow(QWidget):
@@ -99,20 +99,25 @@ class EditMatchWindow(QWidget):
             if singles_differential > 0:
                 for i in range(int(conf.read_number_of_singles()), int(self.number_of_singles_lineedit.text())):
                     match_id = "s" + str(i+1)
-                    var.dict_matches[match_id] = Match(match_id)
+                    var.dict_matches[match_id] = SinglesMatch(match_id)
             elif singles_differential < 0:
                 for i in range(int(self.number_of_singles_lineedit.text()), int(conf.read_number_of_singles())):
                     match_id = "s" + str(i+1)
+                    section_name = match_id.upper()
                     del var.dict_matches[match_id]
+                    conf.set_value(section_name, "p", "")
 
             if doubles_differential > 0:
                 for i in range(int(conf.read_number_of_doubles()), int(self.number_of_doubles_lineedit.text())):
                     match_id = "d" + str(i+1)
-                    var.dict_matches[match_id] = Match(match_id)
+                    var.dict_matches[match_id] = DoublesMatch(match_id)
             elif doubles_differential < 0:
                 for i in range(int(self.number_of_doubles_lineedit.text()), int(conf.read_number_of_doubles())):
                     match_id = "d" + str(i+1)
+                    section_name = match_id.upper()
                     del var.dict_matches[match_id]
+                    conf.set_value(section_name, "p1", "")
+                    conf.set_value(section_name, "p2", "")
 
             # save to match config
             self.save_match_config()
@@ -139,51 +144,49 @@ class EditMatchWindow(QWidget):
         number_of_doubles = int(conf.read_number_of_doubles())
 
         for i in range(number_of_singles):
-            label_name = "label_s" + str(i+1)
-            label_text = "S" + str(i+1)
+            match_id = "s" + str(i+1)
+            label_name = "label_" + match_id
+            label_text = match_id.upper()
             setattr(self, label_name, QLabel(label_text))
 
-            lineedit_name = "lineedit_s" + str(i+1)
+            lineedit_name = "lineedit_" + match_id
             setattr(self, lineedit_name, QLineEdit(""))
 
             self.singles_gridlayout.addWidget(getattr(self, label_name), i, 0)
 
-            section_name = "S" + str(i + 1)
             lineedit = getattr(self, lineedit_name)
-            try: lineedit.setText(conf.read_value(section_name, "p"))
-            except: lineedit.setText("")
+            lineedit.setText(var.dict_matches[match_id].player_name)
             self.singles_gridlayout.addWidget(lineedit, i, 1)
 
         for i in range(number_of_doubles):
-            section_name = "D" + str(i+1)
+            match_id = "d" + str(i+1)
+            match_id_hi = "D" + str(i+1)
             # player1
-            label_name_1 = "label_d" + str(i+1) + "_1"
-            label_text_1 = "D" + str(i+1) + "①"
+            label_name_1 = "label_" + match_id + "_1"
+            label_text_1 = match_id_hi + "①"
             setattr(self, label_name_1, QLabel(label_text_1))
 
-            lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
+            lineedit_name_1 = "lineedit_" + match_id + "_1"
             setattr(self, lineedit_name_1, QLineEdit(""))
 
             self.doubles_gridlayout.addWidget(getattr(self, label_name_1), i*2, 0)
 
             lineedit_1 = getattr(self, lineedit_name_1)
-            try: lineedit_1.setText(conf.read_value(section_name, "p1"))
-            except: lineedit_1.setText("")
+            lineedit_1.setText(var.dict_matches[match_id].player_name_1)
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_1), i*2, 1)
 
             # player2
-            label_name_2 = "label_d" + str(i+1) + "_2"
-            label_text_2 = "D" + str(i + 1) + "②"
+            label_name_2 = "label_" + match_id + "_2"
+            label_text_2 = match_id_hi + "②"
             setattr(self, label_name_2, QLabel(label_text_2))
 
-            lineedit_name_2 = "lineedit_d" + str(i + 1) + "_2"
+            lineedit_name_2 = "lineedit_" + match_id + "_2"
             setattr(self, lineedit_name_2, QLineEdit(""))
 
             self.doubles_gridlayout.addWidget(getattr(self, label_name_2), i*2+1, 0)
 
             lineedit_2 = getattr(self, lineedit_name_2)
-            try: lineedit_2.setText(conf.read_value(section_name, "p2"))
-            except: lineedit_2.setText("")
+            lineedit_2.setText(var.dict_matches[match_id].player_name_2)
             self.doubles_gridlayout.addWidget(getattr(self, lineedit_name_2), i*2+1, 1)
 
     def save_match_config(self):
@@ -193,17 +196,21 @@ class EditMatchWindow(QWidget):
 
         # save player list
         for i in range(int(conf.read_number_of_singles())):
-            lineedit_name = "lineedit_s" + str(i + 1)
-            section_name = "S" + str(i+1)
+            lineedit_name = "lineedit_s" + str(i+1)
+            match_id = "s" + str(i+1)
+            var.dict_matches[match_id].set_player(getattr(self, lineedit_name).text())
+
+            section_name = "S" + str(i + 1)
             conf.add_section(section_name)
             conf.set_value(section_name, "p", getattr(self, lineedit_name).text())
 
         for i in range(int(conf.read_number_of_doubles())):
             lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
             lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
-            section_name = "D" + str(i+1)
-            option_name_1 = "D" + str(i+1) + "p1"
-            option_name_2 = "D" + str(i+1) + "p2"
+            match_id = "d" + str(i+1)
+            var.dict_matches[match_id].set_player(getattr(self, lineedit_name_1).text(), getattr(self, lineedit_name_2).text())
+
+            section_name = "D" + str(i + 1)
             conf.add_section(section_name)
             conf.set_value(section_name, "p1", getattr(self, lineedit_name_1).text())
             conf.set_value(section_name, "p2", getattr(self, lineedit_name_2).text())
