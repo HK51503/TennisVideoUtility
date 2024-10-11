@@ -83,7 +83,6 @@ class MainWindow(QMainWindow):
         ret = confirmation_dialog.exec()
 
         if ret == QMessageBox.Yes:
-            var.university_name = conf.read_university()
             self.progress_window.show()
             self.progress_window.run_main_process()
             self.progress_window.close_signal.connect(self.process_finished)

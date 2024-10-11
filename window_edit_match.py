@@ -131,6 +131,7 @@ class EditMatchWindow(QWidget):
 
         else:
             self.warning_label.setText(self.tr("有効な数字を入力してください"))
+            self.save_match_config()
 
         self.update()
 
@@ -192,6 +193,7 @@ class EditMatchWindow(QWidget):
     def save_match_config(self):
         # save university name
         conf.set_university(self.university_name_lineedit.text())
+        var.university_name = self.university_name_lineedit.text()
         conf.set_value("settings", "match_date", var.match_date)
 
         # save player list

@@ -3,6 +3,7 @@ if exist .venv\ (
   echo Virtual environment already exists, skipping
   echo Activating virtual environment
   .venv\Scripts\activate.bat
+  pip install -r requirements.txt
   if "%~1" == "" (
   py main.py
   ) else (

@@ -59,7 +59,6 @@ class ProgressWindow(QWidget):
         self.thread.start()
 
     def worker_finished(self):
-        self.thread.quit()
         self.worker.deleteLater()
         self.thread.deleteLater()
         self.is_finished = True
@@ -99,48 +98,35 @@ class Worker(QObject):
         is_stitch_videos = conf.read_value("video_settings", "stitch_videos")
         is_keep_original = conf.read_value("video_settings", "keep_original")
         cwd = os.getcwd()
-        if is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "False":
-            logging.debug("Config is False False False")
-            current_directory = cwd
-            match_directory_path = tool_rename.create_match_folder(current_directory)
-            tool_rename.rename_videos(match_directory_path)
-        elif is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "True":
-            logging.debug("Config is False False True")
-            current_directory = cwd
-            match_directory_path = tool_rename.create_match_folder(current_directory)
-            tool_rename.copy_videos(match_directory_path)
-            tool_rename.rename_videos(match_directory_path)
-        elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "False":
-            logging.debug("Config is False True False")
-            if self.is_enough_disk_space(cwd) is True:
-                current_directory = cwd
-                match_directory_path = tool_rename.create_match_folder(current_directory)
-                timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-                tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
-                tool_rename.rename_stitched_videos(match_directory_path)
-        elif is_youtube_upload == "False" and is_stitch_videos == "True" and is_keep_original == "True":
-            logging.debug("Config is False True True")
-            if self.is_enough_disk_space(cwd) is True:
-                current_directory = cwd
-                match_directory_path = tool_rename.create_match_folder(current_directory)
-                timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-                tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
-                tool_rename.rename_stitched_videos(match_directory_path)
-        elif is_youtube_upload == "True" and is_stitch_videos == "True" and is_keep_original == "True":
-            logging.debug("Config is True True True")
-            if self.is_enough_disk_space(cwd) is True:
-                current_directory = cwd
-                match_directory_path = tool_rename.create_match_folder(current_directory)
-                timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
-                tool_ffmpeg.stitch_videos(match_directory_path, timestamp_file_path, is_keep_original)
-                tool_rename.rename_stitched_videos(match_directory_path)
-                tool_youtube_upload.upload_videos()
-        else:
-            logging.info("Configuration not supported")
+        match_directory_path = tool_rename.create_match_folder(cwd)
+        logging.debug("Config:" + is_youtube_upload + is_stitch_videos + is_keep_original)
+        for match_id in var.dict_matches:
+            if var.dict_matches[match_id].file_list:
+                if is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "False":
+                    tool_rename.rename_videos(match_id, match_directory_path)
+                elif is_youtube_upload == "False" and is_stitch_videos == "False" and is_keep_original == "True":
+                    if self.is_enough_disk_space(cwd) is True:
+                        tool_rename.copy_video(match_id, match_directory_path)
+                        tool_rename.rename_videos(match_id, match_directory_path)
+                elif is_youtube_upload == "False" and is_stitch_videos == "True":
+                    if self.is_enough_disk_space(cwd) is True:
+                        timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
+                        tool_ffmpeg.stitch_video(match_id, match_directory_path, timestamp_file_path, is_keep_original)
+                        tool_rename.rename_stitched_video(match_id, match_directory_path)
+                elif is_youtube_upload == "True" and is_stitch_videos == "True" and is_keep_original == "True":
+                    if self.is_enough_disk_space(cwd) is True:
+                        timestamp_file_path = os.path.join(match_directory_path, "timestamp.txt")
+                        tool_ffmpeg.stitch_video(match_id, match_directory_path, timestamp_file_path, is_keep_original)
+                        tool_rename.rename_stitched_video(match_id, match_directory_path)
+                        tool_youtube_upload.upload_video(match_id)
+            else:
+                logging.info("Video not selected in " + match_id.upper() + ". Skipping...")
+
         logging.info("Everything done")
         self.finished.emit()
 
-    def is_enough_disk_space(self, path):
+    @staticmethod
+    def is_enough_disk_space(path):
         total_size = 0
         for match_id in var.dict_matches:
             for file in var.dict_matches[match_id].file_list:

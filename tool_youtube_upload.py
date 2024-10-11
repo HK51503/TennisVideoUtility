@@ -42,7 +42,7 @@ CLIENT_SECRETS_FILE = "client_secrets.json"
 
 # This OAuth 2.0 access scope allows an application to upload files to the
 # authenticated user's YouTube channel, but doesn't allow other types of access.
-YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
+YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
@@ -117,7 +117,8 @@ def initialize_upload(youtube, options):
         media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
     )
 
-    resumable_upload(insert_request)
+    response = resumable_upload(insert_request)
+    return response
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
@@ -138,6 +139,7 @@ def resumable_upload(insert_request):
                           response['id'])
                     print("Video id '%s' was successfully uploaded." %
                           response['id'])
+
                 else:
                     logging.info("The upload failed with an unexpected response: %s" % response)
                     exit("The upload failed with an unexpected response: %s" % response)
@@ -163,6 +165,8 @@ def resumable_upload(insert_request):
             print("Sleeping %f seconds and then retrying..." % sleep_seconds)
             time.sleep(sleep_seconds)
 
+    return response
+
 
 def upload(file_path, title, description, privacy_status):
     args = argparser.parse_args()
@@ -175,19 +179,23 @@ def upload(file_path, title, description, privacy_status):
 
     youtube = get_authenticated_service()
     try:
-        initialize_upload(youtube, args)
+        response = initialize_upload(youtube, args)
     except HttpError as e:
         logging.info("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
         print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+        response = None
+
+    return response
 
 
-def upload_videos():
-    for match_id in var.dict_matches:
-        logging.info("Preparing to upload %s" % match_id)
-        file_path = var.dict_matches[match_id].youtube_upload_file_path
-        title = var.dict_matches[match_id].youtube_upload_title
-        description = var.dict_matches[match_id].youtube_upload_description
-        upload(file_path, title, description, "unlisted")
+def upload_video(match_id):
+    logging.info("Preparing to upload %s" % match_id)
+    file_path = var.dict_matches[match_id].youtube_upload_file_path
+    title = var.dict_matches[match_id].youtube_upload_title
+    description = var.dict_matches[match_id].youtube_upload_description
+    response = upload(file_path, title, description, "unlisted")
+    if response is not None:
+        var.dict_matches[match_id].self.youtube_upload_id = response["id"]
 
 
 if __name__ == '__main__':

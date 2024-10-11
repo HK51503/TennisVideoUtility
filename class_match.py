@@ -10,6 +10,7 @@ class Match:
         self.youtube_upload_title = ""
         self.youtube_upload_description = ""
         self.youtube_upload_file_path = ""
+        self.youtube_upload_id = ""
 
     def is_singles(self):
         if self.singles_or_doubles == "s":
