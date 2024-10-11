@@ -1,8 +1,10 @@
+import os.path
+
 from PySide6.QtWidgets import (
-    QTabWidget, QWidget, QRadioButton, QLabel, QGroupBox, QVBoxLayout, QGridLayout,
+    QTabWidget, QWidget, QRadioButton, QLabel, QGroupBox, QVBoxLayout, QHBoxLayout, QGridLayout,
     QButtonGroup, QFrame, QComboBox, QSpacerItem, QSizePolicy, QPushButton
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QObject, Signal, QThread
 import functions_settings_config as settings
 import tool_youtube_upload
 
@@ -118,7 +120,9 @@ class GeneralSettingsTab(QWidget):
 
         self.language_change_restart_label.show()
 
+
 class YouTubeSettingsTab(QWidget):
+    count = 0
     def __init__(self):
         super().__init__()
         main_v_layout = QVBoxLayout()
@@ -143,12 +147,29 @@ class YouTubeSettingsTab(QWidget):
         youtube_setting_layout.addWidget(youtube_upload_true_button, 0, 1)
         youtube_setting_layout.addWidget(youtube_upload_false_button, 0, 2)
 
-        youtube_login_label = QLabel(self.tr("Googleアカウント"))
-        youtube_login_button = QPushButton()
-        youtube_login_button.clicked.connect(self.youtube_login_button_clicked)
+        youtube_login_label = QLabel(self.tr("YouTubeアカウント"))
+        youtube_login_button_layout = QHBoxLayout()
+        self.youtube_login_button = QPushButton(self.tr("ログイン"))
+        # self.youtube_cancel_button = QPushButton(self.tr("キャンセル"))
+        self.youtube_logout_button = QPushButton(self.tr("ログアウト"))
+        youtube_login_button_layout.addWidget(self.youtube_login_button)
+        # youtube_login_button_layout.addWidget(self.youtube_cancel_button)
+        youtube_login_button_layout.addWidget(self.youtube_logout_button)
+        self.youtube_login_button.clicked.connect(self.youtube_login_button_clicked)
+        # self.youtube_cancel_button.clicked.connect(self.youtube_cancel_button_clicked)
+        self.youtube_logout_button.clicked.connect(self.youtube_logout_button_clicked)
+
+        if os.path.exists("oauth2.json"):
+            self.youtube_login_button.hide()
+            # self.youtube_cancel_button.hide()
+            self.youtube_logout_button.show()
+        else:
+            self.youtube_login_button.show()
+            # self.youtube_cancel_button.hide()
+            self.youtube_logout_button.hide()
 
         youtube_setting_layout.addWidget(youtube_login_label, 1, 0)
-        youtube_setting_layout.addWidget(youtube_login_button, 1, 1)
+        youtube_setting_layout.addLayout(youtube_login_button_layout, 1, 1)
 
         youtube_setting_groupbox.setLayout(youtube_setting_layout)
         main_v_layout.addWidget(youtube_setting_groupbox, alignment=Qt.AlignTop)
@@ -160,4 +181,61 @@ class YouTubeSettingsTab(QWidget):
             settings.set_value("video_settings", "youtube_upload", "False")
 
     def youtube_login_button_clicked(self):
+        count_name = "count" + str(self.count)
+        setattr(self, count_name, self.count)
+        thread_name = "thread" + str(self.count)
+        worker_name = "worker" + str(self.count)
+        # self.youtube_login_button.hide()
+        # self.youtube_cancel_button.show()
+        # self.youtube_logout_button.hide()
+        setattr(self, thread_name, QThread())
+        setattr(self, worker_name, Worker())
+        getattr(self, worker_name).moveToThread(getattr(self, thread_name))
+
+        getattr(self, thread_name).started.connect(getattr(self, worker_name).get_api)
+        getattr(self, worker_name).finished.connect(lambda n=getattr(self, count_name): self.worker_finished(n))
+
+        getattr(self, thread_name).start()
+        self.count += 1
+
+    def youtube_cancel_button_clicked(self):
+        if os.path.exists("oauth2.json"):
+            os.remove("oauth2.json")
+        self.youtube_login_button.show()
+        # self.youtube_cancel_button.hide()
+        self.youtube_logout_button.hide()
+        # self.delete_thread_and_worker()
+
+        self.youtube_login_button.show()
+        # self.youtube_cancel_button.hide()
+        self.youtube_logout_button.hide()
+
+    def youtube_logout_button_clicked(self):
+        if os.path.exists("oauth2.json"):
+            os.remove("oauth2.json")
+        self.youtube_login_button.show()
+        # self.youtube_cancel_button.hide()
+        self.youtube_logout_button.hide()
+
+    def worker_finished(self, count):
+        self.delete_thread_and_worker(count)
+
+        if os.path.exists("oauth2.json"):
+            self.youtube_login_button.hide()
+            # self.youtube_cancel_button.hide()
+            self.youtube_logout_button.show()
+
+    def delete_thread_and_worker(self, count):
+        thread_name = "thread" + str(count)
+        worker_name = "worker" + str(count)
+        getattr(self, thread_name).quit()
+        getattr(self, thread_name).deleteLater()
+        getattr(self, worker_name).deleteLater()
+
+
+class Worker(QObject):
+    finished = Signal()
+
+    def get_api(self):
         tool_youtube_upload.get_authenticated_service()
+        self.finished.emit()
