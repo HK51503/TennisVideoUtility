@@ -22,6 +22,7 @@ def initialize():
 
     else:
         var.match_date = read_value("settings", "match_date")
+        var.university_name = read_university()
         for i in range(int(read_number_of_singles())):
             match_id = "s" + str(i+1)
             match_id_hi = match_id.upper()

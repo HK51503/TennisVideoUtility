@@ -195,7 +195,7 @@ def upload_video(match_id):
     description = var.dict_matches[match_id].youtube_upload_description
     response = upload(file_path, title, description, "unlisted")
     if response is not None:
-        var.dict_matches[match_id].self.youtube_upload_id = response["id"]
+        var.dict_matches[match_id].youtube_upload_id = response["id"]
 
 
 if __name__ == '__main__':
