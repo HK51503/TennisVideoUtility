@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as conf
 import tool_rename, tool_ffmpeg, tool_youtube_upload
 import variables as var
-import os, logging, shutil
+import os, logging, shutil, time
 
 
 class QTextEditLogger(logging.Handler):
@@ -15,6 +15,9 @@ class QTextEditLogger(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         self.widget.appendPlainText(msg)
+        self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
+
+    def scroll_to_bottom(self):
         self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
 
 
@@ -56,13 +59,16 @@ class ProgressWindow(QWidget):
         self.thread.started.connect(self.worker.main_process)
         self.worker.finished.connect(self.worker_finished)
 
+        time.sleep(1)
         self.thread.start()
 
     def worker_finished(self):
+        self.thread.quit()
         self.worker.deleteLater()
         self.thread.deleteLater()
         self.is_finished = True
         self.close_button.show()
+        self.logger_text_edit.scroll_to_bottom()
 
     def closeEvent(self, event):
         if self.is_finished is True:
