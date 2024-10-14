@@ -22,6 +22,8 @@ def create_match_folder(directory):
 
 def rename_file(destination_file_name, original_file_path, destination_directory_path):
     destination_file_path = os.path.join(destination_directory_path, destination_file_name)
+    if os.path.exists(destination_file_path):
+        os.remove(destination_file_path)
     os.rename(original_file_path, destination_file_path)
 
 

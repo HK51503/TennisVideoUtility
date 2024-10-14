@@ -1,9 +1,6 @@
 match_date = ""
 match_config_file_name = ""
-dict_file_list = {}
-dict_match_id_full = {}
+default_match_config_file_name = ""
 university_name = ""
-dict_stitched_file = {}
-dict_youtube_upload = {}
-theme = ""
 dict_matches = {}
+theme = ""

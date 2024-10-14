@@ -10,6 +10,7 @@ def initialize():
     if var.match_config_file_name == "":
         var.match_date = str(datetime.date.today())
         var.match_config_file_name = "match_" + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + ".ini"
+        var.default_match_config_file_name = var.match_config_file_name
         match_config = ConfigParser(allow_no_value=True)
 
         match_config.add_section("settings")
