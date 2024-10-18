@@ -9,7 +9,7 @@ from window_edit_settings import EditSettingsWindow
 from window_progress import ProgressWindow
 import functions_match_config as conf
 import variables as var
-import os
+import os, time
 
 
 class MainWindow(QMainWindow):
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
     def start_button_clicked(self):
         confirmation_dialog = QMessageBox()
-        confirmation_dialog.setWindowTitle("")
+        confirmation_dialog.setWindowTitle(" ")
         confirmation_dialog.setIcon(QMessageBox.Information)
         confirmation_dialog.setText(self.tr("開始しますか？"))
         confirmation_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -84,11 +84,12 @@ class MainWindow(QMainWindow):
 
         if ret == QMessageBox.Yes:
             self.progress_window.show()
+            time.sleep(1)
             self.progress_window.run_main_process()
             self.progress_window.close_signal.connect(self.process_finished)
 
     def import_match_button_clicked(self):
-        file_name, n = QFileDialog.getOpenFileName(self, caption=self.tr("試合を読み込み"), filter=self.tr("設定ファイル (*.ini)"))
+        file_name, n = QFileDialog.getOpenFileName(self, self.tr("試合を読み込み"), filter=self.tr("設定ファイル (*.ini)"))
         if file_name != "":
             if var.match_config_file_name == var.default_match_config_file_name:
                 os.remove(var.default_match_config_file_name)
@@ -274,7 +275,12 @@ class MatchListWidget(QWidget):
 
     def add_button_clicked(self, match_id):
         # file dialog settings
-        file_dialog = QFileDialog()
+        caption = ""
+        if var.loaded_language == "en":
+            caption = "Select videos for " + match_id.upper()
+        elif var.loaded_language == "ja":
+            caption = match_id.upper() + "の試合を選択"
+        file_dialog = QFileDialog(caption=caption)
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.exec()
 

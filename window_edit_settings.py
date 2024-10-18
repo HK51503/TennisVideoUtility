@@ -14,6 +14,8 @@ class EditSettingsWindow(QWidget):
         super().__init__()
 
         self.setWindowModality(Qt.ApplicationModal)
+        self.setWindowTitle(self.tr("設定"))
+
         tab_widget = QTabWidget()
         main_v_layout = QVBoxLayout()
         tab_widget.addTab(VideoSettingsTab(), self.tr("動画設定"))

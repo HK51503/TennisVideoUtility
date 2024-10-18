@@ -14,6 +14,8 @@ class EditMatchWindow(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
         self.main_v_layout = QVBoxLayout()
 
+        self.setWindowTitle(self.tr("試合設定"))
+
         # Edit match settings
         config_groupbox = QGroupBox()
 
@@ -219,6 +221,7 @@ class EditMatchWindow(QWidget):
 
     def match_date_button_clicked(self):
         self.calendar_window = EditMatchDateWindow()
+        self.calendar_window.setWindowTitle(self.tr("日付を選択"))
         self.calendar_window.show()
         self.calendar_window.calendar_widget.selectionChanged.connect(self.update_date)
 

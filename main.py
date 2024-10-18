@@ -22,6 +22,11 @@ if settings.read_value("general_settings", "language") == "en":
     translator = QtCore.QTranslator(app)
     if translator.load(QtCore.QLocale.English, qm_file):
         QtCore.QCoreApplication.installTranslator(translator)
+        var.loaded_language = "en"
+    else:
+        var.loaded_language = "ja"
+else:
+    var.loaded_language = "ja"
 
 window = MainWindow(app)
 window.show()

@@ -36,7 +36,6 @@ class SinglesMatch(Match):
     def __init__(self, match_id):
         super().__init__(match_id)
         self.player_name = ""
-        self.singles_or_doubles = "s"
 
     def set_player(self, player_name):
         self.player_name = player_name
@@ -48,7 +47,6 @@ class DoublesMatch(Match):
         super().__init__(match_id)
         self.player_name_1 = ""
         self.player_name_2 = ""
-        self.singles_or_doubles = "d"
 
     def set_player(self, player_name_1, player_name_2):
         self.player_name_1 = player_name_1
