@@ -1,5 +1,7 @@
 import tool_rename, tool_ffmpeg, tool_youtube_upload
-import os
+import variables as var
+import functions_match_config as conf
+import os, argparse
 
 
 def clear_console():
@@ -44,7 +46,7 @@ def import_match_menu():
 
 
 def edit_match_menu():
-    pass
+    print("")
 
 
 def settings_menu():
@@ -52,8 +54,19 @@ def settings_menu():
 
 
 def quit_app():
-    pass
+    clear_console()
+    if input("本当に終了しますか？y/n:") == "y":
+        clear_console()
+    else:
+        main_menu()
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", help="Add match config file.", required=False, default="")
+    args = parser.parse_args()
+    if args.config:
+        var.match_config_file_name = args.config
+
+    conf.initialize()
     main_menu()
