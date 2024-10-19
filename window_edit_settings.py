@@ -149,7 +149,7 @@ class YouTubeSettingsTab(QWidget):
         youtube_setting_layout.addWidget(youtube_upload_true_button, 0, 1)
         youtube_setting_layout.addWidget(youtube_upload_false_button, 0, 2)
 
-        youtube_login_label = QLabel(self.tr("YouTubeアカウント"))
+        youtube_login_label = QLabel(self.tr("Googleアカウント"))
         youtube_login_button_layout = QHBoxLayout()
         self.youtube_login_button = QPushButton(self.tr("ログイン"))
         # self.youtube_cancel_button = QPushButton(self.tr("キャンセル"))

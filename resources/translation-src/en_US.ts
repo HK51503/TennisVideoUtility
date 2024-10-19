@@ -276,8 +276,12 @@
     </message>
     <message>
         <location filename="../../window_edit_settings.py" line="152"/>
+        <source>Googleアカウント</source>
+        <translation>Google Account</translation>
+    </message>
+    <message>
         <source>YouTubeアカウント</source>
-        <translation>YouTube Account</translation>
+        <translation type="vanished">YouTube Account</translation>
     </message>
     <message>
         <location filename="../../window_edit_settings.py" line="154"/>
