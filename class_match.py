@@ -1,4 +1,3 @@
-
 class Match:
     def __init__(self, match_id):
         self.match_id_low = match_id

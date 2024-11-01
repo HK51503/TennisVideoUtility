@@ -94,6 +94,8 @@ class MainWindow(QMainWindow):
             if var.match_config_file_name == var.default_match_config_file_name:
                 os.remove(var.default_match_config_file_name)
             var.match_config_file_name = file_name
+
+        var.dict_matches.clear()
         conf.initialize()
         self.render_match_list()
 

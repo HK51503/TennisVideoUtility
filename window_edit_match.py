@@ -108,6 +108,7 @@ class EditMatchWindow(QWidget):
                     section_name = match_id.upper()
                     del var.dict_matches[match_id]
                     conf.set_value(section_name, "p", "")
+                    conf.set_value(section_name, "files", "[]")
 
             if doubles_differential > 0:
                 for i in range(int(conf.read_number_of_doubles()), int(self.number_of_doubles_lineedit.text())):
@@ -120,6 +121,7 @@ class EditMatchWindow(QWidget):
                     del var.dict_matches[match_id]
                     conf.set_value(section_name, "p1", "")
                     conf.set_value(section_name, "p2", "")
+                    conf.set_value(section_name, "files", "[]")
 
             # save to match config
             self.save_match_config()
@@ -133,7 +135,6 @@ class EditMatchWindow(QWidget):
 
         else:
             self.warning_label.setText(self.tr("有効な数字を入力してください"))
-            self.save_match_config()
 
         self.update()
 
@@ -202,22 +203,29 @@ class EditMatchWindow(QWidget):
         for i in range(int(conf.read_number_of_singles())):
             lineedit_name = "lineedit_s" + str(i+1)
             match_id = "s" + str(i+1)
-            var.dict_matches[match_id].set_player(getattr(self, lineedit_name).text())
+            try: var.dict_matches[match_id].set_player(getattr(self, lineedit_name).text())
+            except KeyError: pass
 
             section_name = "S" + str(i + 1)
             conf.add_section(section_name)
             conf.set_value(section_name, "p", getattr(self, lineedit_name).text())
+            if not conf.if_option_exists(section_name, "files"):
+                conf.set_value(section_name, "files", "[]")
+
 
         for i in range(int(conf.read_number_of_doubles())):
             lineedit_name_1 = "lineedit_d" + str(i+1) + "_1"
             lineedit_name_2 = "lineedit_d" + str(i+1) + "_2"
             match_id = "d" + str(i+1)
-            var.dict_matches[match_id].set_player(getattr(self, lineedit_name_1).text(), getattr(self, lineedit_name_2).text())
+            try: var.dict_matches[match_id].set_player(getattr(self, lineedit_name_1).text(), getattr(self, lineedit_name_2).text())
+            except KeyError: pass
 
             section_name = "D" + str(i + 1)
             conf.add_section(section_name)
             conf.set_value(section_name, "p1", getattr(self, lineedit_name_1).text())
             conf.set_value(section_name, "p2", getattr(self, lineedit_name_2).text())
+            if not conf.if_option_exists(section_name, "files"):
+                conf.set_value(section_name, "files", "[]")
 
     def match_date_button_clicked(self):
         self.calendar_window = EditMatchDateWindow()

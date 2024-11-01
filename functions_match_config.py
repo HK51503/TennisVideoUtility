@@ -29,15 +29,13 @@ def initialize():
             match_id_hi = match_id.upper()
             var.dict_matches[match_id] = SinglesMatch(match_id)
             var.dict_matches[match_id].set_player(read_value(match_id_hi, "p"))
-            try: var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
-            except: pass
+            var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
         for i in range(int(read_number_of_doubles())):
             match_id = "d" + str(i + 1)
             match_id_hi = match_id.upper()
             var.dict_matches[match_id] = DoublesMatch(match_id)
             var.dict_matches[match_id].set_player(read_value(match_id_hi, "p1"), read_value(match_id_hi, "p2"))
-            try: var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
-            except: pass
+            var.dict_matches[match_id].file_list = ast.literal_eval(read_value(match_id_hi, "files"))
 
 
 def add_section(section):
@@ -111,6 +109,12 @@ def read_number_of_doubles():
 def if_match_exists():
     if read_number_of_singles() == "0" and read_number_of_doubles() == "0": return False
     else: return True
+
+def if_option_exists(section, option):
+    try:
+        read_value(section, option)
+        return True
+    except KeyError: return False
 
 
 def read_config(match_config):
