@@ -5,3 +5,4 @@ university_name = ""
 dict_matches = {}
 theme = ""
 loaded_language = ""
+platform = ""

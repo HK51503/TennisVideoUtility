@@ -3,9 +3,23 @@ import variables as var
 import os
 import datetime
 import logging
+import requests
+import zipfile
+import shutil
 
 
 def stitch_video(match_id, destination_path, timestamp_file_path, is_keep_original):
+    # Set the path to your ffmpeg binaries
+    ffmpeg_path = "resources/ffmpeg/bin"
+    # Check if ffmpeg exists and download it if it doesn't
+    ffmpeg_exists_check = 3 > len([f for f in os.listdir(ffmpeg_path) if os.path.isfile(os.path.join(ffmpeg_path, f))])
+    if ffmpeg_exists_check:
+        for file in os.listdir(ffmpeg_path):
+            os.remove(os.path.join(ffmpeg_path, file))
+        download_ffmpeg()
+    # Add the directory containing ffmpeg to the PATH environment variable
+    os.environ["PATH"] = f"{ffmpeg_path}{os.pathsep}{os.environ.get('PATH', '')}"
+
     # stitch videos
     f = open("concat.txt", "w", encoding="utf-8")
     f.writelines([('''file '%s'\n''' % input_path) for input_path in var.dict_matches[match_id].file_list])
@@ -43,13 +57,63 @@ def stitch_video(match_id, destination_path, timestamp_file_path, is_keep_origin
             logging.info("Finished removing file: " + os.path.basename(file))
 
 
-
 def get_video_duration(video_path):
     video_info = ffmpeg.probe(video_path)
     duration = float(video_info["streams"][0]["duration"])
     return duration
 
 
+def download_ffmpeg():
+    destination_directory = "resources/ffmpeg"
+    if var.platform == "windows":
+        ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+        file_name = "ffmpeg-release-essentials.zip"
+        download_file(ffmpeg_url, file_name, destination_directory)
+        with zipfile.ZipFile(os.path.join(destination_directory, file_name), "r") as ffmpeg_zip:
+            selective_files = [f for f in ffmpeg_zip.namelist() if f[len(f) - 4:] == ".exe"]
+            ffmpeg_folder_name = selective_files[0].split("/")[0]
+            for file in selective_files:
+                logging.info("Extracting " + file.split("/")[-1])
+                ffmpeg_zip.extract(file, destination_directory)
+        logging.info("Done extracting files")
+
+        shutil.rmtree(os.path.join(destination_directory, "bin"))
+        shutil.move(os.path.join(destination_directory, ffmpeg_folder_name, "bin"), "resources/ffmpeg/")
+        os.remove(os.path.join(destination_directory, file_name))
+        os.rmdir(os.path.join(destination_directory, ffmpeg_folder_name))
+
+    elif var.platform == "darwin":
+        ffmpeg_url = "https://evermeet.cx/ffmpeg/getrelease/ffmpeg/7z"
+        ffmpeg_file_name = "ffmpeg.7z"
+        ffprobe_url = "https://evermeet.cx/ffmpeg/getrelease/ffprobe/7z"
+        ffprobe_file_name = "ffprobe.7z"
+        ffplay_url = "https://evermeet.cx/ffmpeg/getrelease/ffplay/7z"
+        ffplay_file_name = "ffplay.7z"
+        download_file(ffmpeg_url, ffmpeg_file_name, destination_directory)
+        download_file(ffprobe_url, ffprobe_file_name, destination_directory)
+        download_file(ffplay_url, ffplay_file_name, destination_directory)
+    elif var.platform == "linux":
+        ffmpeg_url = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
+        file_name = "ffmpeg-release-amd64-static.tar.xz"
+        download_file(ffmpeg_url, file_name, destination_directory)
+    else:
+        logging.error("Platform not supported")
+        """
+        logic to stop process
+        """
+
+
+
+def download_file(url, file_name, destination_directory):
+    file_path = os.path.join(destination_directory, file_name)
+    logging.info("Downloading " + file_name + " from " + url)
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(file_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    logging.info("Done")
+
 if __name__ == "__main__":
-    path = "/Users/kentezuka/Documents/GitHub/TennisVideoUtility/test/tmp/s1.mp4"
-    get_video_duration(path)
+    var.platform = "windows"
+    download_ffmpeg()

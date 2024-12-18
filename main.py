@@ -3,13 +3,15 @@ from window_main import MainWindow
 import functions_match_config as conf
 import functions_settings_config as settings
 import variables as var
-import argparse, sys, darkdetect, os
+import argparse, sys, darkdetect, os, platform
 """
 # use this to trace variables
 from watchpoints import watch
 
 watch(var.dict_matches)
 """
+var.platform = platform.system().lower()
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add match config file.", required=False, default="")
 args = parser.parse_args()
