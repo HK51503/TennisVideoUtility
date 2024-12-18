@@ -84,7 +84,6 @@ class MainWindow(QMainWindow):
 
         if ret == QMessageBox.Yes:
             self.progress_window.show()
-            time.sleep(1)
             self.progress_window.run_main_process()
             self.progress_window.close_signal.connect(self.process_finished)
 

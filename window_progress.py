@@ -3,22 +3,21 @@ from PySide6.QtCore import Qt, Signal, QObject, QThread
 import functions_settings_config as settings
 import tool_rename, tool_ffmpeg, tool_youtube_upload
 import variables as var
-import os, logging, shutil, time
+import os, logging, shutil
 
 
-class QTextEditLogger(logging.Handler):
-    def __init__(self, parent):
+class LogEmitter(QObject):
+    log_signal = Signal(str)
+
+
+class SignalLoggingHandler(logging.Handler):
+    def __init__(self, log_emitter: LogEmitter):
         super().__init__()
-        self.widget = QPlainTextEdit(parent)
-        self.widget.setReadOnly(True)
+        self.log_emitter = log_emitter
 
     def emit(self, record):
         msg = self.format(record)
-        self.widget.appendPlainText(msg)
-        self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
-
-    def scroll_to_bottom(self):
-        self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
+        self.log_emitter.log_signal.emit(msg)
 
 
 class ProgressWindow(QWidget):
@@ -31,17 +30,14 @@ class ProgressWindow(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
         self.is_finished = False
 
-        self.logger_text_edit = QTextEditLogger(self)
-        self.logger_text_edit.setFormatter(logging.Formatter('[%(asctime)s %(levelname)s]: %(message)s'))
-        logging.getLogger().addHandler(self.logger_text_edit)
-        logging.getLogger().setLevel(logging.INFO)
-        logging.info("Logger Initialized")
+        self.log_text_edit = QPlainTextEdit()
+        self.log_text_edit.setReadOnly(True)
 
         self.close_button = QPushButton(self.tr("閉じる"))
         self.close_button.clicked.connect(self.closeEvent)
 
         main_v_layout = QVBoxLayout()
-        main_v_layout.addWidget(self.logger_text_edit.widget)
+        main_v_layout.addWidget(self.log_text_edit)
         main_v_layout.addWidget(self.close_button, alignment=Qt.AlignRight)
 
         self.close_button.hide()
@@ -59,7 +55,8 @@ class ProgressWindow(QWidget):
         self.thread.started.connect(self.worker.main_process)
         self.worker.finished.connect(self.worker_finished)
 
-        time.sleep(1)
+        self.worker.signal_logging_handler.log_emitter.log_signal.connect(self.add_log)
+
         self.thread.start()
 
     def worker_finished(self):
@@ -68,11 +65,15 @@ class ProgressWindow(QWidget):
         self.thread.deleteLater()
         self.is_finished = True
         self.close_button.show()
-        self.logger_text_edit.scroll_to_bottom()
+        self.log_text_edit.verticalScrollBar().setValue(self.log_text_edit.verticalScrollBar().maximum())
+
+    def add_log(self, msg):
+        self.log_text_edit.appendPlainText(msg)
+        self.log_text_edit.verticalScrollBar().setValue(self.log_text_edit.verticalScrollBar().maximum())
 
     def closeEvent(self, event):
         if self.is_finished is True:
-            self.logger_text_edit.widget.clear()
+            self.log_text_edit.clear()
             self.close_signal.emit()
         else:
             quit_dialog = QMessageBox()
@@ -86,7 +87,7 @@ class ProgressWindow(QWidget):
 
             ret = quit_dialog.exec()
             if ret == QMessageBox.Yes:
-                self.logger_text_edit.widget.clear()
+                self.log_text_edit.clear()
                 self.thread.quit()
                 self.worker.deleteLater()
                 self.thread.deleteLater()
@@ -97,6 +98,14 @@ class ProgressWindow(QWidget):
 
 class Worker(QObject):
     finished = Signal()
+
+    def __init__(self):
+        super().__init__()
+        self.log_emitter = LogEmitter()
+        self.signal_logging_handler = SignalLoggingHandler(self.log_emitter)
+        self.signal_logging_handler.setFormatter(logging.Formatter('[%(asctime)s %(levelname)s]: %(message)s'))
+        logging.getLogger().addHandler(self.signal_logging_handler)
+        logging.getLogger().setLevel(logging.DEBUG)
 
     def main_process(self):
         main_process_logic()
@@ -162,6 +171,7 @@ def is_enough_disk_space(path, match_id):
         logging.info("Free disk space: " + str(disk_free_in_gib) + "GiB")
         logging.info("Not enough disk space")
         return False
+
 
 def is_enough_disk_space_for_remove(path, match_id):
     total_size = 0
