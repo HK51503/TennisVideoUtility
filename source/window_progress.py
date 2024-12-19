@@ -61,6 +61,7 @@ class ProgressWindow(QWidget):
 
     def worker_finished(self):
         self.thread.quit()
+        self.thread.wait()
         self.worker.deleteLater()
         self.thread.deleteLater()
         self.is_finished = True
@@ -89,6 +90,7 @@ class ProgressWindow(QWidget):
             if ret == QMessageBox.Yes:
                 self.log_text_edit.clear()
                 self.thread.quit()
+                self.thread.wait()
                 self.worker.deleteLater()
                 self.thread.deleteLater()
                 self.close_signal.emit()

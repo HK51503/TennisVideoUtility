@@ -1,8 +1,8 @@
 # required packages
-PySide6 == 6.7.1
+PySide6 == 6.8.1
 darkdetect == 0.8.0
 ffmpeg-python == 0.2.0
-google-api-python-client == 2.141.0
+google-api-python-client
 google-auth-oauthlib == 1.2.1
 google-auth-httplib2 == 0.2.0
 oauth2client == 4.1.3

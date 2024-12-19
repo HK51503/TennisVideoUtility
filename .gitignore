@@ -22,6 +22,7 @@ source/client_secrets.json
 source/oauth2.json
 source/tmp/
 tmp/
+pysidedeploy.spec
 
 # ignore ffmpeg binaries
 source/resources/ffmpeg/bin/

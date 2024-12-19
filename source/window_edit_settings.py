@@ -1,4 +1,5 @@
 import os.path
+from multiprocessing.pool import worker
 
 from PySide6.QtWidgets import (
     QTabWidget, QWidget, QRadioButton, QLabel, QGroupBox, QVBoxLayout, QHBoxLayout, QGridLayout,
@@ -195,7 +196,9 @@ class YouTubeSettingsTab(QWidget):
         getattr(self, worker_name).moveToThread(getattr(self, thread_name))
 
         getattr(self, thread_name).started.connect(getattr(self, worker_name).get_api)
-        getattr(self, worker_name).finished.connect(lambda n=getattr(self, count_name): self.worker_finished(n))
+        getattr(self, worker_name).finished.connect(lambda: self.worker_finished(getattr(self, thread_name)))
+        getattr(self, worker_name).finished.connect(getattr(self, worker_name).deleteLater)
+        getattr(self, thread_name).finished.connect(getattr(self, thread_name).deleteLater)
 
         getattr(self, thread_name).start()
         self.count += 1
@@ -219,8 +222,8 @@ class YouTubeSettingsTab(QWidget):
         # self.youtube_cancel_button.hide()
         self.youtube_logout_button.hide()
 
-    def worker_finished(self, count):
-        self.delete_thread_and_worker(count)
+    def worker_finished(self, thread):
+        thread.quit()
 
         if os.path.exists("oauth2.json"):
             self.youtube_login_button.hide()
@@ -228,11 +231,13 @@ class YouTubeSettingsTab(QWidget):
             self.youtube_logout_button.show()
 
     def delete_thread_and_worker(self, count):
+        print(count)
         thread_name = "thread" + str(count)
         worker_name = "worker" + str(count)
         getattr(self, thread_name).quit()
-        getattr(self, thread_name).deleteLater()
+        getattr(self, thread_name).wait()
         getattr(self, worker_name).deleteLater()
+        getattr(self, thread_name).deleteLater()
 
 
 class Worker(QObject):
