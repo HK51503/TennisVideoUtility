@@ -11,6 +11,10 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+
 import variables as var
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
@@ -38,6 +42,7 @@ RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 CLIENT_SECRETS_FILE = "client_secrets.json"
+TOKEN_FILE = "oauth2.json"
 
 # This OAuth 2.0 access scope allows an application to upload files to the
 # authenticated user's YouTube channel, but doesn't allow other types of access.
@@ -65,7 +70,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
-
+"""
 def get_authenticated_service():
     flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
                                    scope=YOUTUBE_UPLOAD_SCOPE,
@@ -79,8 +84,27 @@ def get_authenticated_service():
 
     return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
                  http=credentials.authorize(httplib2.Http()))
+"""
 
+def get_authenticated_service():
+    """Authenticate and return the YouTube API service."""
+    creds = None
+    if os.path.exists(TOKEN_FILE):
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE, YOUTUBE_UPLOAD_SCOPE)
 
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, YOUTUBE_UPLOAD_SCOPE)
+            creds = flow.run_local_server(port=0)
+
+        with open(TOKEN_FILE, "w") as token:
+            token.write(creds.to_json())
+
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=creds)
+
+"""
 def initialize_upload(youtube, options):
     tags = None
     if options.keywords:
@@ -121,8 +145,27 @@ def initialize_upload(youtube, options):
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
+"""
+def initialize_upload(youtube, options):
+    """Initialize and upload the video."""
+    body = {
+        "snippet": {
+            "title": options.title,
+            "description": options.description,
+            "tags": options.keywords.split(",") if options.keywords else None,
+            "categoryId": options.category,
+        },
+        "status": {"privacyStatus": options.privacyStatus},
+    }
 
+    media_body = MediaFileUpload(options.file, chunksize=-1, resumable=True)
+    insert_request = youtube.videos().insert(
+        part=",".join(body.keys()), body=body, media_body=media_body
+    )
 
+    return resumable_upload(insert_request)
+
+"""
 def resumable_upload(insert_request):
     response = None
     error = None
@@ -162,6 +205,42 @@ def resumable_upload(insert_request):
             time.sleep(sleep_seconds)
 
     return response
+"""
+
+def resumable_upload(insert_request):
+    """Handle retries for the upload process."""
+    response = None
+    retry = 0
+    while response is None:
+        try:
+            logging.info("Uploading video...")
+            print("Uploading file...")
+            status, response = insert_request.next_chunk()
+            if response:
+                if "id" in response:
+                    logging.info(f"Video id '{response['id']}' was successfully uploaded.")
+                    print(f"Video id '{response['id']}' was successfully uploaded.")
+                    return response
+                else:
+                    raise Exception(f"Unexpected response: {response}")
+        except HttpError as e:
+            if e.resp.status in RETRIABLE_STATUS_CODES:
+                logging.error(f"Retriable HTTP error {e.resp.status}: {e.content}")
+            else:
+                raise
+        except Exception as e:
+            logging.error(f"Retriable error occurred: {e}")
+
+        retry += 1
+        if retry > MAX_RETRIES:
+            logging.error("Max retries reached. Upload failed.")
+            # raise Exception("Max retries reached. Upload failed.")
+            return response
+
+        sleep_seconds = random.random() * (2 ** retry)
+        logging.info(f"Sleeping {sleep_seconds:.2f} seconds before retry...")
+        time.sleep(sleep_seconds)
+
 
 
 def upload(file_path, title, description, privacy_status):
