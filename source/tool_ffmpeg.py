@@ -12,10 +12,11 @@ def stitch_video(match_id, destination_path, timestamp_file_path, is_keep_origin
     # Set the path to your ffmpeg binaries
     ffmpeg_path = "resources/ffmpeg/bin"
     # Check if ffmpeg exists and download it if it doesn't
-    ffmpeg_exists_check = 3 > len([f for f in os.listdir(ffmpeg_path) if os.path.isfile(os.path.join(ffmpeg_path, f))])
+    ffmpeg_exists_check = 4 > len([f for f in os.listdir(ffmpeg_path) if os.path.isfile(os.path.join(ffmpeg_path, f))])
     if ffmpeg_exists_check:
         for file in os.listdir(ffmpeg_path):
-            os.remove(os.path.join(ffmpeg_path, file))
+            if file != "place.holder":
+                os.remove(os.path.join(ffmpeg_path, file))
         download_ffmpeg()
     # Add the directory containing ffmpeg to the PATH environment variable
     os.environ["PATH"] = f"{ffmpeg_path}{os.pathsep}{os.environ.get('PATH', '')}"
@@ -77,7 +78,8 @@ def download_ffmpeg():
                 ffmpeg_zip.extract(file, destination_directory)
         logging.info("Done extracting files")
 
-        shutil.rmtree(os.path.join(destination_directory, "bin"))
+        shutil.move(os.path.join(destination_directory, "bin", "place.holder"), os.path.join(destination_directory, ffmpeg_folder_name, "bin"))
+        os.rmdir(os.path.join(destination_directory, "bin"))
         shutil.move(os.path.join(destination_directory, ffmpeg_folder_name, "bin"), "resources/ffmpeg/")
         os.remove(os.path.join(destination_directory, file_name))
         os.rmdir(os.path.join(destination_directory, ffmpeg_folder_name))

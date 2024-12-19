@@ -4,6 +4,7 @@ import functions_match_config as conf
 import functions_settings_config as settings
 import variables as var
 import argparse, sys, darkdetect, os, platform
+
 """
 # use this to trace variables
 from watchpoints import watch
@@ -26,7 +27,7 @@ var.theme = darkdetect.theme()
 
 app = QtWidgets.QApplication(sys.argv)
 
-qm_file = "./resources/translation-bin/en_US.qm"
+qm_file = "resources/translation-bin/en_US.qm"
 if settings.read_value("general_settings", "language") == "en":
     translator = QtCore.QTranslator(app)
     if translator.load(QtCore.QLocale.English, qm_file):
